@@ -1,0 +1,12 @@
+[Unit]
+Description=Log sensor values to round robin database
+DefaultDependencies=no
+After=multi-user.target
+
+[Service]
+ExecStart=/usr/bin/bash /home/guco/.scripts/run_rrd.sh
+Type=simple
+
+[Install]
+WantedBy=multi-user.target
+
