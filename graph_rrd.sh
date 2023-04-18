@@ -11,8 +11,8 @@ if [ ${PIPESTATUS[0]} != 4 ]; then
     exit 1
 fi
 
-OPTS="hv:d:o:t:h:w"
-LONGOPTS="help,verbose:,database:,output:,time:,height:,min-width:"
+OPTS="hv:d:o:s:e:r:h:w"
+LONGOPTS="help,verbose:,database:,output:,start:,end:,rra:,height:,min-width:"
 print_help() {
 	cat <<EOF
 Usage: $(basename $0) [OTHER OPTIONS]
@@ -22,7 +22,9 @@ E.g.: $(basename $0) --out ${HOME}/graph # produces graph.png
   -v, --verbose         show raw data on stdout
   -d, --database        base filename for the .rrd file
   -o, --output          base filename for the .png file
-  -t, --time            time to show in graph (defaults to 60 seconds)
+  -s, --start           start time of graph (defaults to start of archive)
+  -e, --end             end time of graph (defaults to end of archive)
+  -r, --rra             rra index to use for first and last element   
       --height          graph height (in pixels, default: 800)
       --min-width       minimum graph width (default: 1000)
 EOF
@@ -39,8 +41,8 @@ VERBOSE="0"
 OUT="graph"
 DB="sensors"
 ROWS="100000"
-GRAPH_GENERATION_INTERVAL="60" # in seconds
 TIME="60"
+RRA="0"
 HEIGHT="800"
 MIN_WIDTH="1000"
 while true; do
@@ -54,7 +56,7 @@ while true; do
 			shift
 			;;
 		-d|--database)
-			OUT="$2"
+			DB="$2"
 			shift 2
 			;;
 		-o|--output)
@@ -63,6 +65,18 @@ while true; do
 			;;
 		-t|--time)
 			TIME="$2"
+			shift 2
+			;;
+		-s|--start)
+			START="$2"
+			shift 2
+			;;
+		-e|--end)
+			END="$2"
+			shift 2
+			;;
+		-r|--rra)
+			RRA="$2"
 			shift 2
 			;;
 		--height)
@@ -94,6 +108,21 @@ COLORS=(
 	"#705DA0"
 )
 
+if [[ -v START ]]
+then
+    echo "Start graph at command line argument ${START}"
+else
+    START="$(rrdtool first --rraindex ${RRA} ${DB}.rrd)"
+    echo "Start graph at start of archive ${START}"
+fi
+if [[ -v END ]]
+then
+    echo "Finish graph at command line argument ${END}"
+else
+    END="$(rrdtool last ${DB}.rrd)"
+    echo "Finish graph at end of archive ${END}"
+fi
+
 LINE_WIDTH=1
 ALPHA=30 # used in area RGBA
 
@@ -106,7 +135,7 @@ rrdtool graph \
     --alt-y-grid \
     --left-axis-format "%.0lf%%" \
     --rigid \
-    --start N-${TIME} --end N \
+    --start ${START} --end ${END} \
     --width ${MIN_WIDTH} \
     --height ${HEIGHT} \
     --color CANVAS#181B1F \
@@ -115,8 +144,8 @@ rrdtool graph \
     DEF:cpu_temp=${DB}.rrd:cpu_temp:AVERAGE \
         VDEF:cpu_temp_max=cpu_temp,MAXIMUM \
         VDEF:cpu_temp_avg=cpu_temp,AVERAGE \
-        CDEF:cpu_temp_norm=cpu_temp,cpu_temp_max,/,100,* \
-        CDEF:cpu_temp_norm_avg=cpu_temp,POP,cpu_temp_avg,100,*,cpu_temp_max,/ \
+        CDEF:cpu_temp_norm=cpu_temp,cpu_temp_max,/,100,\* \
+        CDEF:cpu_temp_norm_avg=cpu_temp,POP,cpu_temp_avg,100,\*,cpu_temp_max,/ \
         LINE1:cpu_temp_norm${COLORS[0]}:"%TEMP\t" \
         LINE0.5:cpu_temp_norm_avg${COLORS[0]}:dashes \
         GPRINT:cpu_temp_max:"(max\: %.2lf\g" \
@@ -125,8 +154,8 @@ rrdtool graph \
     DEF:cpu_load=${DB}.rrd:cpu_load:AVERAGE \
         VDEF:cpu_load_max=cpu_load,MAXIMUM \
         VDEF:cpu_load_avg=cpu_load,AVERAGE \
-        CDEF:cpu_load_norm=cpu_load,cpu_load_max,/,100,* \
-        CDEF:cpu_load_norm_avg=cpu_load,POP,cpu_load_avg,100,*,cpu_load_max,/ \
+        CDEF:cpu_load_norm=cpu_load,cpu_load_max,/,100,\* \
+        CDEF:cpu_load_norm_avg=cpu_load,POP,cpu_load_avg,100,\*,cpu_load_max,/ \
         LINE1:cpu_load_norm${COLORS[1]}:"%CPU\t" \
         LINE0.5:cpu_load_norm_avg${COLORS[1]}:dashes \
 	    AREA:cpu_load_norm${COLORS[1]}${ALPHA} \
@@ -136,8 +165,8 @@ rrdtool graph \
     DEF:net_in=${DB}.rrd:net_in:AVERAGE \
         VDEF:net_in_max=net_in,MAXIMUM \
         VDEF:net_in_avg=net_in,AVERAGE \
-        CDEF:net_in_norm=net_in,net_in_max,/,100,* \
-        CDEF:net_in_norm_avg=net_in,POP,net_in_avg,100,*,net_in_max,/ \
+        CDEF:net_in_norm=net_in,net_in_max,/,100,\* \
+        CDEF:net_in_norm_avg=net_in,POP,net_in_avg,100,\*,net_in_max,/ \
         LINE1:net_in_norm${COLORS[2]}:"%In\t" \
         LINE0.5:net_in_norm_avg${COLORS[2]}:dashes \
         GPRINT:net_in_max:"(max\: %.2lf KB/s\g" \
@@ -146,8 +175,8 @@ rrdtool graph \
     DEF:net_out=${DB}.rrd:net_out:AVERAGE \
         VDEF:net_out_max=net_out,MAXIMUM \
         VDEF:net_out_avg=net_out,AVERAGE \
-        CDEF:net_out_norm=net_out,net_out_max,/,100,* \
-        CDEF:net_out_norm_avg=net_out,POP,net_out_avg,100,*,net_out_max,/ \
+        CDEF:net_out_norm=net_out,net_out_max,/,100,\* \
+        CDEF:net_out_norm_avg=net_out,POP,net_out_avg,100,\*,net_out_max,/ \
         LINE1:net_out_norm${COLORS[3]}:"%Out\t" \
         LINE0.5:net_out_norm_avg${COLORS[3]}:dashes \
         GPRINT:net_out_max:"(max\: %.2lf KB/s\g" \
