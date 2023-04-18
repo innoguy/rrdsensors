@@ -33,7 +33,7 @@ fi
 # read getopt's output this way to handle the quoting right
 eval set -- "$PARSED"
 VERBOSE="0"
-DATABASE="sensors"
+DB="${HOME}/.scripts/sensors"
 INTERFACE="eno1"
 ROWS="100000"
 while true; do
@@ -47,7 +47,7 @@ while true; do
 			shift
 			;;
 		-d|--database)
-			DATABASE="$2"
+			DB="$2"
 			shift 2
 			;;
 		-i|--interface)
@@ -74,7 +74,7 @@ do
   CPU_TEMP="$(bc -l <<< $(uptime | awk '{print $(NF-2)+0}'))"
   NET_IN="$(bc -l <<< $(ifstat  -i ${INTERFACE}  1 1 | awk 'FNR==3 {print $1+0}'))"
   NET_OUT="$(bc -l <<< $(ifstat  -i ${INTERFACE}  1 1 | awk 'FNR==3 {print $2+0}'))"
-  rrdtool updatev ${DATABASE}.rrd N:$CPU_LOAD:$CPU_TEMP:$NET_IN:$NET_OUT
+  rrdtool updatev ${DB}.rrd N:$CPU_LOAD:$CPU_TEMP:$NET_IN:$NET_OUT
   sleep 5
 done
  

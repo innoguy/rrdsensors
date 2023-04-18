@@ -39,7 +39,7 @@ fi
 eval set -- "$PARSED"
 VERBOSE="0"
 OUT="graph"
-DB="sensors"
+DB="${HOME}/.scripts/sensors"
 ROWS="100000"
 TIME="60"
 RRA="0"

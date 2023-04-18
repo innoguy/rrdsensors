@@ -4,7 +4,7 @@ DefaultDependencies=no
 After=multi-user.target
 
 [Service]
-ExecStart=/usr/bin/bash /home/guco/.scripts/run_rrd.sh
+ExecStart=/usr/bin/bash /home/guco/.scripts/run_rrd.sh 
 Type=simple
 
 [Install]

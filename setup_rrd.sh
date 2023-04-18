@@ -32,7 +32,7 @@ fi
 # read getopt's output this way to handle the quoting right
 eval set -- "$PARSED"
 VERBOSE="0"
-OUT="sensors"
+DB="${HOME}/.scripts/sensors"
 ROWS="100000"
 while true; do
 	case "$1" in
@@ -45,7 +45,7 @@ while true; do
 			shift
 			;;
 		-d|--database)
-			DATABASE="$2"
+			DB="$2"
 			shift 2
 			;;
 		-r|--rows)
@@ -63,7 +63,7 @@ while true; do
 done
 
 
-rrdtool create ${DATABASE}.rrd --start N --step 5 \
+rrdtool create ${DB}.rrd --start N --step 5 \
     DS:cpu_temp:GAUGE:10:U:U \
     DS:cpu_load:GAUGE:10:U:U \
     DS:net_in:GAUGE:10:U:U \
