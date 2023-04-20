@@ -39,7 +39,7 @@ fi
 eval set -- "$PARSED"
 VERBOSE="0"
 OUT="graph"
-DB="${HOME}/.scripts/sensors"
+DB="${HOME}/rrdsensors/sensors"
 ROWS="100000"
 TIME="60"
 RRA="0"
@@ -141,34 +141,44 @@ rrdtool graph \
     --color CANVAS#181B1F \
     --color BACK#111217 \
     --color FONT#CCCCDC \
-    DEF:cpu_temp=${DB}.rrd:cpu_temp:AVERAGE \
-        VDEF:cpu_temp_max=cpu_temp,MAXIMUM \
-        VDEF:cpu_temp_avg=cpu_temp,AVERAGE \
-        CDEF:cpu_temp_norm=cpu_temp,cpu_temp_max,/,100,\* \
-        CDEF:cpu_temp_norm_avg=cpu_temp,POP,cpu_temp_avg,100,\*,cpu_temp_max,/ \
-        LINE1:cpu_temp_norm${COLORS[0]}:"%TEMP\t" \
-        LINE0.5:cpu_temp_norm_avg${COLORS[0]}:dashes \
-        GPRINT:cpu_temp_max:"(max\: %.2lf\g" \
-        GPRINT:cpu_temp_avg:"(avg\: %.2lf)" \
-        COMMENT:"\n" \
     DEF:cpu_load=${DB}.rrd:cpu_load:AVERAGE \
         VDEF:cpu_load_max=cpu_load,MAXIMUM \
         VDEF:cpu_load_avg=cpu_load,AVERAGE \
         CDEF:cpu_load_norm=cpu_load,cpu_load_max,/,100,\* \
         CDEF:cpu_load_norm_avg=cpu_load,POP,cpu_load_avg,100,\*,cpu_load_max,/ \
-        LINE1:cpu_load_norm${COLORS[1]}:"%CPU\t" \
-        LINE0.5:cpu_load_norm_avg${COLORS[1]}:dashes \
-	    AREA:cpu_load_norm${COLORS[1]}${ALPHA} \
+        LINE1:cpu_load_norm${COLORS[0]}:"%CPU\t" \
+        LINE0.5:cpu_load_norm_avg${COLORS[0]}:dashes \
+        AREA:cpu_load_norm${COLORS[0]}${ALPHA} \
         GPRINT:cpu_load_max:"(max\: %.2lf \g" \
         GPRINT:cpu_load_avg:"(avg\:%.2lf)" \
+        COMMENT:"\n" \
+    DEF:cpu_temp=${DB}.rrd:cpu_temp:AVERAGE \
+        VDEF:cpu_temp_max=cpu_temp,MAXIMUM \
+        VDEF:cpu_temp_avg=cpu_temp,AVERAGE \
+        CDEF:cpu_temp_norm=cpu_temp,cpu_temp_max,/,100,\* \
+        CDEF:cpu_temp_norm_avg=cpu_temp,POP,cpu_temp_avg,100,\*,cpu_temp_max,/ \
+        LINE1:cpu_temp_norm${COLORS[1]}:"%CPUT\t" \
+        LINE0.5:cpu_temp_norm_avg${COLORS[1]}:dashes \
+        GPRINT:cpu_temp_max:"(max\: %.2lf\g" \
+        GPRINT:cpu_temp_avg:"(avg\: %.2lf)" \
+        COMMENT:"\n" \
+    DEF:ssd_temp=${DB}.rrd:ssd_temp:AVERAGE \
+        VDEF:ssd_temp_max=ssd_temp,MAXIMUM \
+        VDEF:ssd_temp_avg=ssd_temp,AVERAGE \
+        CDEF:ssd_temp_norm=ssd_temp,ssd_temp_max,/,100,\* \
+        CDEF:ssd_temp_norm_avg=ssd_temp,POP,ssd_temp_avg,100,\*,ssd_temp_max,/ \
+        LINE1:ssd_temp_norm${COLORS[2]}:"%SSDT\t" \
+        LINE0.5:ssd_temp_norm_avg${COLORS[2]}:dashes \
+        GPRINT:ssd_temp_max:"(max\: %.2lf\g" \
+        GPRINT:ssd_temp_avg:"(avg\: %.2lf)" \
         COMMENT:"\n" \
     DEF:net_in=${DB}.rrd:net_in:AVERAGE \
         VDEF:net_in_max=net_in,MAXIMUM \
         VDEF:net_in_avg=net_in,AVERAGE \
         CDEF:net_in_norm=net_in,net_in_max,/,100,\* \
         CDEF:net_in_norm_avg=net_in,POP,net_in_avg,100,\*,net_in_max,/ \
-        LINE1:net_in_norm${COLORS[2]}:"%In\t" \
-        LINE0.5:net_in_norm_avg${COLORS[2]}:dashes \
+        LINE1:net_in_norm${COLORS[3]}:"%In\t" \
+        LINE0.5:net_in_norm_avg${COLORS[3]}:dashes \
         GPRINT:net_in_max:"(max\: %.2lf KB/s\g" \
         GPRINT:net_in_avg:"(avg\: %.2lf KB/s)" \
         COMMENT:"\n" \
@@ -177,8 +187,8 @@ rrdtool graph \
         VDEF:net_out_avg=net_out,AVERAGE \
         CDEF:net_out_norm=net_out,net_out_max,/,100,\* \
         CDEF:net_out_norm_avg=net_out,POP,net_out_avg,100,\*,net_out_max,/ \
-        LINE1:net_out_norm${COLORS[3]}:"%Out\t" \
-        LINE0.5:net_out_norm_avg${COLORS[3]}:dashes \
+        LINE1:net_out_norm${COLORS[4]}:"%Out\t" \
+        LINE0.5:net_out_norm_avg${COLORS[4]}:dashes \
         GPRINT:net_out_max:"(max\: %.2lf KB/s\g" \
         GPRINT:net_out_avg:"(avg\: %.2lf KB/s)" \
         COMMENT:"\n" \

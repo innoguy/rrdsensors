@@ -33,8 +33,8 @@ fi
 # read getopt's output this way to handle the quoting right
 eval set -- "$PARSED"
 VERBOSE="0"
-DB="${HOME}/.scripts/sensors"
-INTERFACE="eno1"
+DB="${HOME}/rrdsensors/sensors"
+INTERFACE="eth2"
 ROWS="100000"
 while true; do
 	case "$1" in
@@ -70,11 +70,12 @@ done
 
 while [ true ] 
 do
-  CPU_LOAD="$(bc -l <<< $(sensors | awk 'FNR==3 {print $2+0}'))"
-  CPU_TEMP="$(bc -l <<< $(uptime | awk '{print $(NF-2)+0}'))"
+  CPU_TEMP="$(bc -l <<< $(sensors | awk 'FNR==3 {print $4+0}'))"
+  SSD_TEMP="$(bc -l <<< $(sensors | awk 'FNR==14 {print $2+0}'))"
+  CPU_LOAD="$(bc -l <<< $(top -b -n1 | grep 'Cpu(s)' | awk '{print $2 + $4}'))"
   NET_IN="$(bc -l <<< $(ifstat  -i ${INTERFACE}  1 1 | awk 'FNR==3 {print $1+0}'))"
   NET_OUT="$(bc -l <<< $(ifstat  -i ${INTERFACE}  1 1 | awk 'FNR==3 {print $2+0}'))"
-  rrdtool updatev ${DB}.rrd N:$CPU_LOAD:$CPU_TEMP:$NET_IN:$NET_OUT
+  rrdtool updatev ${DB}.rrd N:$CPU_LOAD:$CPU_TEMP:$SSD_TEMP:$NET_IN:$NET_OUT
   sleep 5
 done
  

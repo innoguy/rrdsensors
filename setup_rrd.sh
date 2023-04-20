@@ -32,7 +32,7 @@ fi
 # read getopt's output this way to handle the quoting right
 eval set -- "$PARSED"
 VERBOSE="0"
-DB="${HOME}/.scripts/sensors"
+DB="${HOME}/rrdsensors/sensors"
 ROWS="100000"
 while true; do
 	case "$1" in
@@ -64,8 +64,9 @@ done
 
 
 rrdtool create ${DB}.rrd --start N --step 5 \
-    DS:cpu_temp:GAUGE:10:U:U \
     DS:cpu_load:GAUGE:10:U:U \
+    DS:cpu_temp:GAUGE:10:U:U \
+    DS:ssd_temp:GAUGE:10:U:U \
     DS:net_in:GAUGE:10:U:U \
     DS:net_out:GAUGE:10:U:U \
-    RRA:AVERAGE:0.5:1:120 RRA:AVERAGE:0.5:12:120 RRA:AVERAGE:0.5:3600:720
+    RRA:AVERAGE:0.5:1:12000 RRA:AVERAGE:0.5:12:12000 
