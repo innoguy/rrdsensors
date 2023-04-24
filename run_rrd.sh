@@ -2,6 +2,9 @@
 
 set -u
 
+CONTROLLER="NUC"
+#CONTROLLER="T1"
+
 # Argument parsing 
 ! getopt --test > /dev/null
 if [ ${PIPESTATUS[0]} != 4 ]; then
@@ -33,9 +36,20 @@ fi
 # read getopt's output this way to handle the quoting right
 eval set -- "$PARSED"
 VERBOSE="0"
-DB="${HOME}/rrdsensors/sensors"
-INTERFACE="eth2"
-ROWS="100000"
+DB="${HOME}/Software/rrdsensors/sensors"
+
+if [ $CONTROLLER=='NUC' ]
+then
+    echo "Configuring for NUC"
+    INTERFACE="eno1"
+	CPU_TEMP_LINE=9
+	CPU_TEMP_COLUMN=3
+elif [ $CONTROLLER=='T1' ]
+then
+    echo "Configuring for T1"
+    INTERFACE='wlp6s0'
+fi
+
 while true; do
 	case "$1" in
 		-h|--help)
@@ -70,12 +84,30 @@ done
 
 while [ true ] 
 do
-  CPU_TEMP="$(bc -l <<< $(sensors | awk 'FNR==3 {print $4+0}'))"
-  SSD_TEMP="$(bc -l <<< $(sensors | awk 'FNR==14 {print $2+0}'))"
-  CPU_LOAD="$(bc -l <<< $(top -b -n1 | grep 'Cpu(s)' | awk '{print $2 + $4}'))"
-  NET_IN="$(bc -l <<< $(ifstat  -i ${INTERFACE}  1 1 | awk 'FNR==3 {print $1+0}'))"
-  NET_OUT="$(bc -l <<< $(ifstat  -i ${INTERFACE}  1 1 | awk 'FNR==3 {print $2+0}'))"
-  rrdtool updatev ${DB}.rrd N:$CPU_LOAD:$CPU_TEMP:$SSD_TEMP:$NET_IN:$NET_OUT
-  sleep 5
+  if [ $CONTROLLER=='NUC' ]
+  then
+	CPU_TEMP="$(bc -l <<< $(sensors | awk 'FNR==9 {print $3+0}'))"
+	SSD_TEMP="$(bc -l <<< $(/usr/bin/readssdtemp))"
+	CPU_LOAD="$(bc -l <<< $(top -b -n1 | grep 'Cpu(s)' | awk '{print $2 + $4}'))"
+	SSD_READ="$(bc -l <<< $(cat /proc/diskstats | grep "sdb " | awk '{print $6}'))"
+	SSD_WRITE="$(bc -l <<< $(cat /proc/diskstats | grep "sdb " | awk '{print $10}'))"
+	NET_IN="$(bc -l <<< $(ifstat  -i ${INTERFACE}  1 1 | awk 'FNR==3 {print $1+0}'))"
+	NET_OUT="$(bc -l <<< $(ifstat  -i ${INTERFACE}  1 1 | awk 'FNR==3 {print $2+0}'))"
+  elif [ $CONTROLLER=='T1' ]
+  then
+    CPU_TEMP="$(bc -l <<< $(sensors | awk 'FNR==13 {print $3+0}'))"
+    SSD_TEMP="$(bc -l <<< $(sensors | awk 'FNR==18 {print $2+0}'))"
+	CPU_LOAD="$(bc -l <<< $(top -b -n1 | grep 'Cpu(s)' | awk '{print $2 + $4}'))"
+	SSD_READ="$(bc -l <<< $(cat /proc/diskstats | grep "nvme0n1 " | awk '{print $6}'))"
+	SSD_WRITE="$(bc -l <<< $(cat /proc/diskstats | grep "nvme0n1 " | awk '{print $10}'))"
+	NET_IN="$(bc -l <<< $(ifstat  -i ${INTERFACE}  1 1 | awk 'FNR==3 {print $1+0}'))"
+	NET_OUT="$(bc -l <<< $(ifstat  -i ${INTERFACE}  1 1 | awk 'FNR==3 {print $2+0}'))"
+  fi
+  rrdtool updatev ${DB}.rrd N:$CPU_LOAD:$CPU_TEMP:$SSD_READ:$SSD_WRITE:$SSD_TEMP:$NET_IN:$NET_OUT
+  sleep 2
 done
  
+
+# In /usr/bin create script readssdtemp with chmod a+rwx and content 
+# #!/bin/bash
+# sudo smartctl -d sntrealtek /dev/sdb -a | grep 'Temperature:' | awk '{print $2}'

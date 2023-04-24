@@ -39,7 +39,7 @@ fi
 eval set -- "$PARSED"
 VERBOSE="0"
 OUT="graph"
-DB="${HOME}/rrdsensors/sensors"
+DB="${HOME}/Software/rrdsensors/sensors"
 ROWS="100000"
 TIME="60"
 RRA="0"
@@ -161,6 +161,26 @@ rrdtool graph \
         LINE0.5:cpu_temp_norm_avg${COLORS[1]}:dashes \
         GPRINT:cpu_temp_max:"(max\: %.2lf\g" \
         GPRINT:cpu_temp_avg:"(avg\: %.2lf)" \
+        COMMENT:"\n" \
+    DEF:ssd_read=${DB}.rrd:ssd_read:AVERAGE \
+        VDEF:ssd_read_max=ssd_read,MAXIMUM \
+        VDEF:ssd_read_avg=ssd_read,AVERAGE \
+        CDEF:ssd_read_norm=ssd_read,ssd_read_max,/,100,\* \
+        CDEF:ssd_read_norm_avg=ssd_read,POP,ssd_read_avg,100,\*,ssd_read_max,/ \
+        LINE1:ssd_read_norm${COLORS[3]}:"%SSDR\t" \
+        LINE0.5:ssd_read_norm_avg${COLORS[3]}:dashes \
+        GPRINT:ssd_read_max:"(max\: %.2lf\g" \
+        GPRINT:ssd_read_avg:"(avg\: %.2lf)" \
+        COMMENT:"\n" \
+    DEF:ssd_write=${DB}.rrd:ssd_write:AVERAGE \
+        VDEF:ssd_write_max=ssd_write,MAXIMUM \
+        VDEF:ssd_write_avg=ssd_write,AVERAGE \
+        CDEF:ssd_write_norm=ssd_write,ssd_write_max,/,100,\* \
+        CDEF:ssd_write_norm_avg=ssd_write,POP,ssd_write_avg,100,\*,ssd_write_max,/ \
+        LINE1:ssd_write_norm${COLORS[4]}:"%SSDW\t" \
+        LINE0.5:ssd_write_norm_avg${COLORS[4]}:dashes \
+        GPRINT:ssd_write_max:"(max\: %.2lf\g" \
+        GPRINT:ssd_write_avg:"(avg\: %.2lf)" \
         COMMENT:"\n" \
     DEF:ssd_temp=${DB}.rrd:ssd_temp:AVERAGE \
         VDEF:ssd_temp_max=ssd_temp,MAXIMUM \

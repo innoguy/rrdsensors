@@ -4,8 +4,9 @@ DefaultDependencies=no
 After=multi-user.target
 
 [Service]
-ExecStart=/usr/bin/bash /home/guco/.scripts/run_rrd.sh 
-Type=simple
+ExecStart=/usr/bin/bash $HOME/Software/rrdsensors/run_rrd.sh 
+Restart=on-failure
+RestartSec=1s
 
 [Install]
 WantedBy=multi-user.target

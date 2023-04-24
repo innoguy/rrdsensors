@@ -32,8 +32,7 @@ fi
 # read getopt's output this way to handle the quoting right
 eval set -- "$PARSED"
 VERBOSE="0"
-DB="${HOME}/rrdsensors/sensors"
-ROWS="100000"
+DB="${HOME}/Software/rrdsensors/sensors"
 while true; do
 	case "$1" in
 		-h|--help)
@@ -62,11 +61,14 @@ while true; do
 	esac
 done
 
-
+# Store 24 hours every 5 sec (17280 5s intervals)
+# Store 30 days every minute (43200 (12 x 5s) intervals)
 rrdtool create ${DB}.rrd --start N --step 5 \
-    DS:cpu_load:GAUGE:10:U:U \
-    DS:cpu_temp:GAUGE:10:U:U \
-    DS:ssd_temp:GAUGE:10:U:U \
-    DS:net_in:GAUGE:10:U:U \
-    DS:net_out:GAUGE:10:U:U \
-    RRA:AVERAGE:0.5:1:12000 RRA:AVERAGE:0.5:12:12000 
+    DS:cpu_load:GAUGE:5:U:U \
+    DS:cpu_temp:GAUGE:5:U:U \
+	DS:ssd_read:COUNTER:5:U:U \
+	DS:ssd_write:COUNTER:5:U:U \
+    DS:ssd_temp:GAUGE:5:U:U \
+    DS:net_in:GAUGE:5:U:U \
+    DS:net_out:GAUGE:5:U:U \
+    RRA:AVERAGE:0.5:1:17280 RRA:AVERAGE:0.5:12:43200 
