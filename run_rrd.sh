@@ -36,15 +36,15 @@ fi
 # read getopt's output this way to handle the quoting right
 eval set -- "$PARSED"
 VERBOSE="0"
-DB="${HOME}/Software/rrdsensors/sensors"
+DB="/var/log/sensors"
 
-if [ $CONTROLLER=='NUC' ]
+if [[ $CONTROLLER=='NUC' ]]
 then
     echo "Configuring for NUC"
     INTERFACE="eno1"
 	CPU_TEMP_LINE=9
 	CPU_TEMP_COLUMN=3
-elif [ $CONTROLLER=='T1' ]
+elif [[ $CONTROLLER=='T1' ]]
 then
     echo "Configuring for T1"
     INTERFACE='wlp6s0'
@@ -84,16 +84,16 @@ done
 
 while [ true ] 
 do
-  if [ $CONTROLLER=='NUC' ]
+  if [[ $CONTROLLER=='NUC' ]]
   then
 	CPU_TEMP="$(bc -l <<< $(sensors | awk 'FNR==9 {print $3+0}'))"
-	SSD_TEMP="$(bc -l <<< $(/usr/bin/readssdtemp))"
+	SSD_TEMP="$(bc -l <<< $(smartctl -d sntrealtek /dev/sdb -a | grep 'Temperature:' | awk '{print $2}'))"
 	CPU_LOAD="$(bc -l <<< $(top -b -n1 | grep 'Cpu(s)' | awk '{print $2 + $4}'))"
 	SSD_READ="$(bc -l <<< $(cat /proc/diskstats | grep "sdb " | awk '{print $6}'))"
 	SSD_WRITE="$(bc -l <<< $(cat /proc/diskstats | grep "sdb " | awk '{print $10}'))"
 	NET_IN="$(bc -l <<< $(ifstat  -i ${INTERFACE}  1 1 | awk 'FNR==3 {print $1+0}'))"
 	NET_OUT="$(bc -l <<< $(ifstat  -i ${INTERFACE}  1 1 | awk 'FNR==3 {print $2+0}'))"
-  elif [ $CONTROLLER=='T1' ]
+  elif [[ $CONTROLLER=='T1' ]]
   then
     CPU_TEMP="$(bc -l <<< $(sensors | awk 'FNR==13 {print $3+0}'))"
     SSD_TEMP="$(bc -l <<< $(sensors | awk 'FNR==18 {print $2+0}'))"
@@ -107,7 +107,3 @@ do
   sleep 2
 done
  
-
-# In /usr/bin create script readssdtemp with chmod a+rwx and content 
-# #!/bin/bash
-# sudo smartctl -d sntrealtek /dev/sdb -a | grep 'Temperature:' | awk '{print $2}'

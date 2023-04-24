@@ -2,6 +2,10 @@
 
 set -u
 
+sudo ln -s ./run_rrd.sh /usr/bin/
+sudo cp ./rrd.service /etc/systemd/system/
+sudo systemctl daemon-reload
+
 # Argument parsing 
 ! getopt --test > /dev/null
 if [ ${PIPESTATUS[0]} != 4 ]; then
@@ -32,7 +36,7 @@ fi
 # read getopt's output this way to handle the quoting right
 eval set -- "$PARSED"
 VERBOSE="0"
-DB="${HOME}/Software/rrdsensors/sensors"
+DB="/var/log/sensors"
 while true; do
 	case "$1" in
 		-h|--help)
@@ -72,3 +76,6 @@ rrdtool create ${DB}.rrd --start N --step 5 \
     DS:net_in:GAUGE:5:U:U \
     DS:net_out:GAUGE:5:U:U \
     RRA:AVERAGE:0.5:1:17280 RRA:AVERAGE:0.5:12:43200 
+
+sudo systemctl start rrd
+sudo systemctl status rrd
