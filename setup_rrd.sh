@@ -2,8 +2,8 @@
 
 set -u
 
-sudo ln -s ./run_rrd.sh /usr/bin/
-sudo cp ./rrd.service /etc/systemd/system/
+sudo cp ./run_rrd.sh /usr/bin/run_rrd.sh
+sudo cp ./rrd.service /etc/systemd/system/rrd.service
 sudo systemctl daemon-reload
 
 # Argument parsing 

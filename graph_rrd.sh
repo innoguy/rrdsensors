@@ -39,7 +39,7 @@ fi
 eval set -- "$PARSED"
 VERBOSE="0"
 OUT="graph"
-DB="${HOME}/Software/rrdsensors/sensors"
+DB="/var/log/sensors"
 ROWS="100000"
 TIME="60"
 RRA="0"

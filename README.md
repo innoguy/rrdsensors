@@ -1,11 +1,13 @@
-shell scripts are expected in 
-$HOME/.scripts directory
+Author	: Guy Coen
 
-service definition file should be copied to 
-$HOME/.config/systemd/user/rrd.service
+This system logs key system parameters in a time series database and graphs them.
 
-then enable with
-systemctl --user enable rrd
+To install:
+- edit run_rrd.sh and set appropriate CONTROLLER (NUC or T1)
+- sudo ./setup_rrd.sh
 
-then start with
-systemctl --user start rrd
+To graph:
+- ./graph_rrd.sh --start N-300 
+will create a graph.png of the last 300 seconds in the current directory
+
+
