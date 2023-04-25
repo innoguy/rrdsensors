@@ -2,6 +2,7 @@
 
 set -u
 
+sudo apt update && sudo apt install rrdtool smartmontools ifstat
 sudo cp ./run_rrd.sh /usr/bin/run_rrd.sh
 sudo cp ./rrd.service /etc/systemd/system/rrd.service
 sudo systemctl daemon-reload

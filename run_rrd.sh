@@ -95,8 +95,8 @@ do
 	NET_OUT="$(bc -l <<< $(ifstat  -i ${INTERFACE}  1 1 | awk 'FNR==3 {print $2+0}'))"
   elif [[ $CONTROLLER=='T1' ]]
   then
-    CPU_TEMP="$(bc -l <<< $(sensors | awk 'FNR==13 {print $3+0}'))"
-    SSD_TEMP="$(bc -l <<< $(sensors | awk 'FNR==18 {print $2+0}'))"
+	CPU_TEMP="$(bc -l <<< $(sensors | grep 'Core 0' | awk '{print $3+0}'))"
+	SSD_TEMP="$(bc -l <<< $(sensors | grep 'Composite' | awk '{print $2+0}'))"
 	CPU_LOAD="$(bc -l <<< $(top -b -n1 | grep 'Cpu(s)' | awk '{print $2 + $4}'))"
 	SSD_READ="$(bc -l <<< $(cat /proc/diskstats | grep "nvme0n1 " | awk '{print $6}'))"
 	SSD_WRITE="$(bc -l <<< $(cat /proc/diskstats | grep "nvme0n1 " | awk '{print $10}'))"
