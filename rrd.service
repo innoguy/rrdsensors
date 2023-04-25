@@ -5,6 +5,8 @@ After=network.target
 
 [Service]
 ExecStart=/usr/bin/run_rrd.sh 
+Restart=on-failure
+RestartSec=5s
 
 [Install]
 WantedBy=multi-user.target

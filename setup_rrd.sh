@@ -11,27 +11,30 @@ fi
 for i in rrdtool smartmontools ifstat
 do
     dpkg -s $i &> /dev/null
-    if [ $? -ne 0 ]; then echo "Please install $i using sudo apt install $i"; fi
-    exit
+    if [ $? -ne 0 ]
+	then 
+	  echo "Please install $i using sudo apt install $i"
+	  exit 
+	fi
 done
 
 if [ ! -f "/usr/bin/run_rrd.sh" ]
 then
     echo "Please link or copy run_ssd.sh to /usr/bin/run_rrd.sh"
-	echo "Before doing so, check the following in file run_rrd.sh:"
+    echo "Before doing so, check the following in file run_rrd.sh:"
     echo "  Set the CONTROLLER variable to the right value (NUC, T1 or RPI)"
-	echo "  Set the right values for network interfaces IF_ETH, IF_CEL, IF_WIF"
-	echo "  Set the right value for the used DISK (nvme0n1, sdb, mmcblk0,...)"
-	echo "  Check if the sensor calculations work correctly on your system"
-	exit
+    echo "  Set the right values for network interfaces IF_ETH, IF_CEL, IF_WIF"
+    echo "  Set the right value for the used DISK (nvme0n1, sdb, mmcblk0,...)"
+    echo "  Check if the sensor calculations work correctly on your system"
+    exit
 fi
 
 if [ ! -f "/etc/systemd/system/rrd.service" ]
 then
     echo "Please link or copy rrd.service to /etc/systemd/system/rrd.service"
 	echo "Before doing so:"
-	echo "    - Make sure the Exec field links to the right executable"
-	echo "    - Check if you want the service to restart or not and adapt service file" 
+	echo "  Make sure the Exec field links to the right executable"
+	echo "  Check if you want the service to restart or not and adapt service file" 
 	exit
 fi
 
