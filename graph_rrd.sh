@@ -102,7 +102,7 @@ COLORS=(
 	"#FF0000"
 	"#00FF00"
 	"#0000FF"
-	"#00FFFF"
+	"#FFF700"
 	"#EF843C"
 	"#1F78C1"
 	"#705DA0"
@@ -167,8 +167,8 @@ rrdtool graph \
         VDEF:ssd_read_avg=ssd_read,AVERAGE \
         CDEF:ssd_read_norm=ssd_read,ssd_read_max,/,100,\* \
         CDEF:ssd_read_norm_avg=ssd_read,POP,ssd_read_avg,100,\*,ssd_read_max,/ \
-        LINE1:ssd_read_norm${COLORS[3]}:"%SSDR\t" \
-        LINE0.5:ssd_read_norm_avg${COLORS[3]}:dashes \
+        LINE1:ssd_read_norm${COLORS[2]}:"%SSDR\t" \
+        LINE0.5:ssd_read_norm_avg${COLORS[2]}:dashes \
         GPRINT:ssd_read_max:"(max\: %.2lf\g" \
         GPRINT:ssd_read_avg:"(avg\: %.2lf)" \
         COMMENT:"\n" \
@@ -177,8 +177,8 @@ rrdtool graph \
         VDEF:ssd_write_avg=ssd_write,AVERAGE \
         CDEF:ssd_write_norm=ssd_write,ssd_write_max,/,100,\* \
         CDEF:ssd_write_norm_avg=ssd_write,POP,ssd_write_avg,100,\*,ssd_write_max,/ \
-        LINE1:ssd_write_norm${COLORS[4]}:"%SSDW\t" \
-        LINE0.5:ssd_write_norm_avg${COLORS[4]}:dashes \
+        LINE1:ssd_write_norm${COLORS[3]}:"%SSDW\t" \
+        LINE0.5:ssd_write_norm_avg${COLORS[3]}:dashes \
         GPRINT:ssd_write_max:"(max\: %.2lf\g" \
         GPRINT:ssd_write_avg:"(avg\: %.2lf)" \
         COMMENT:"\n" \
@@ -187,8 +187,8 @@ rrdtool graph \
         VDEF:ssd_temp_avg=ssd_temp,AVERAGE \
         CDEF:ssd_temp_norm=ssd_temp,ssd_temp_max,/,100,\* \
         CDEF:ssd_temp_norm_avg=ssd_temp,POP,ssd_temp_avg,100,\*,ssd_temp_max,/ \
-        LINE1:ssd_temp_norm${COLORS[2]}:"%SSDT\t" \
-        LINE0.5:ssd_temp_norm_avg${COLORS[2]}:dashes \
+        LINE1:ssd_temp_norm${COLORS[4]}:"%SSDT\t" \
+        LINE0.5:ssd_temp_norm_avg${COLORS[4]}:dashes \
         GPRINT:ssd_temp_max:"(max\: %.2lf\g" \
         GPRINT:ssd_temp_avg:"(avg\: %.2lf)" \
         COMMENT:"\n" \
@@ -197,8 +197,8 @@ rrdtool graph \
         VDEF:net_in_avg=net_in,AVERAGE \
         CDEF:net_in_norm=net_in,net_in_max,/,100,\* \
         CDEF:net_in_norm_avg=net_in,POP,net_in_avg,100,\*,net_in_max,/ \
-        LINE1:net_in_norm${COLORS[3]}:"%In\t" \
-        LINE0.5:net_in_norm_avg${COLORS[3]}:dashes \
+        LINE1:net_in_norm${COLORS[5]}:"%In\t" \
+        LINE0.5:net_in_norm_avg${COLORS[5]}:dashes \
         GPRINT:net_in_max:"(max\: %.2lf KB/s\g" \
         GPRINT:net_in_avg:"(avg\: %.2lf KB/s)" \
         COMMENT:"\n" \
@@ -207,8 +207,8 @@ rrdtool graph \
         VDEF:net_out_avg=net_out,AVERAGE \
         CDEF:net_out_norm=net_out,net_out_max,/,100,\* \
         CDEF:net_out_norm_avg=net_out,POP,net_out_avg,100,\*,net_out_max,/ \
-        LINE1:net_out_norm${COLORS[4]}:"%Out\t" \
-        LINE0.5:net_out_norm_avg${COLORS[4]}:dashes \
+        LINE1:net_out_norm${COLORS[6]}:"%Out\t" \
+        LINE0.5:net_out_norm_avg${COLORS[6]}:dashes \
         GPRINT:net_out_max:"(max\: %.2lf KB/s\g" \
         GPRINT:net_out_avg:"(avg\: %.2lf KB/s)" \
         COMMENT:"\n" \
