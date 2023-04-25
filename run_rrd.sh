@@ -3,7 +3,7 @@
 #CONTROLLER="NUC"
 #CONTROLLER="T1"
 #CONTROLLER="RPI"
-
+#CONTROLLER="M1PRO"
 
 if [ -z "$CONTROLLER" ]
 then
@@ -65,6 +65,13 @@ then
 	IF_CEL=""
 	IF_WIF="wlan0"
 	DISK="mmcblk0"
+elif [[ $CONTROLLER == 'M1PRO' ]]
+then
+    echo "Configuring for M1PRO"
+	IF_ETH="enp1s0"
+	IF_CEL=""
+	IF_WIF="wlp6s0"
+	DISK="mmcblk1"
 fi
 
 while true; do
@@ -112,6 +119,11 @@ do
   elif [[ $CONTROLLER == 'RPI' ]]
   then
 	CPU_TEMP="$(bc -l <<< $(sensors | grep 'temp1:' | awk '{print $2+0}'))"
+	SSD_TEMP="$(bc -l <<< $(sensors | grep 'temp1:' | awk '{print $2+0}'))"
+	CPU_LOAD="$(bc -l <<< $(top -b -n1 | grep 'Cpu(s)' | awk '{print $2 + $4}'))"
+  elif [[ $CONTROLLER == 'M1PRO' ]]
+  then
+	CPU_TEMP="$(bc -l <<< $(sensors | grep 'Core 0:' | awk '{print $2+0}'))"
 	SSD_TEMP="$(bc -l <<< $(sensors | grep 'temp1:' | awk '{print $2+0}'))"
 	CPU_LOAD="$(bc -l <<< $(top -b -n1 | grep 'Cpu(s)' | awk '{print $2 + $4}'))"
   fi

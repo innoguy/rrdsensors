@@ -11,4 +11,6 @@ To graph:
 - ./graph_rrd.sh --start N-600 
 will create a graph.png of the last 600 seconds in the current directory
 
+Usefull tips:
+smartctl --scan will give you a list of SMART compliant disks
 
