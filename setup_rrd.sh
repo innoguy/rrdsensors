@@ -2,10 +2,38 @@
 
 set -u
 
-# sudo apt update && sudo apt install rrdtool smartmontools ifstat
-# sudo cp ./run_rrd.sh /usr/bin/run_rrd.sh
-# sudo cp ./rrd.service /etc/systemd/system/rrd.service
-# sudo systemctl daemon-reload
+if [ "$EUID" -ne 0 ]
+then
+    echo "Please run with sudo"
+	exit
+fi
+
+for i in rrdtool smartmontools ifstat
+do
+    dpkg -s $i &> /dev/null
+    if [ $? -ne 0 ]; then echo "Please install $i using sudo apt install $i"; fi
+    exit
+done
+
+if [ ! -f "/usr/bin/run_rrd.sh" ]
+then
+    echo "Please link or copy run_ssd.sh to /usr/bin/run_rrd.sh"
+	echo "Before doing so, check the following in file run_rrd.sh:"
+    echo "  Set the CONTROLLER variable to the right value (NUC, T1 or RPI)"
+	echo "  Set the right values for network interfaces IF_ETH, IF_CEL, IF_WIF"
+	echo "  Set the right value for the used DISK (nvme0n1, sdb, mmcblk0,...)"
+	echo "  Check if the sensor calculations work correctly on your system"
+	exit
+fi
+
+if [ ! -f "/etc/systemd/system/rrd.service" ]
+then
+    echo "Please link or copy rrd.service to /etc/systemd/system/rrd.service"
+	echo "Before doing so:"
+	echo "    - Make sure the Exec field links to the right executable"
+	echo "    - Check if you want the service to restart or not and adapt service file" 
+	exit
+fi
 
 # Argument parsing 
 ! getopt --test > /dev/null
@@ -79,5 +107,12 @@ rrdtool create ${DB}.rrd --start N --step 5 \
     DS:net_eth:COUNTER:5:U:U \
     RRA:AVERAGE:0.5:1:17280 RRA:AVERAGE:0.5:12:43200 
 
-# sudo systemctl start rrd
-# sudo systemctl status rrd
+if [ ! -f "${DB}.rrd" ]
+then
+    echo "Something went wrong. "
+    echo "Database ${DB}.rrd is not yet in place"
+    exit
+fi
+
+echo "All set! Now either run the data collector run_rrd.sh manually or activate the systemd service with:"
+echo "    sudo systemctl daemon-reload && sudo systemctl start rrd && sudo systemctl status rrd"

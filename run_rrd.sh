@@ -1,11 +1,15 @@
 #!/bin/bash
 
-set -u
-
 #CONTROLLER="NUC"
-CONTROLLER="T1"
+#CONTROLLER="T1"
 #CONTROLLER="RPI"
 
+
+if [ -z "$CONTROLLER" ]
+then
+    echo "CONTROLLER not yet set. Please uncomment the right one in run_ssh.sh"
+	exit
+fi
 
 # Argument parsing 
 ! getopt --test > /dev/null
@@ -50,7 +54,6 @@ then
 elif [[ $CONTROLLER == 'T1' ]]
 then
     echo "Configuring for T1"
-    INTERFACE='wlp6s0'
 	IF_ETH="eth2"
 	IF_CEL="mlan0"
 	IF_WIF="wlp6s0"
