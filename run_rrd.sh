@@ -43,17 +43,25 @@ DB="/var/log/sensors"
 if [[ $CONTROLLER=='NUC' ]]
 then
     echo "Configuring for NUC"
-    INTERFACE="eno1"
-	CPU_TEMP_LINE=9
-	CPU_TEMP_COLUMN=3
+    IF_ETH="eno1"
+	IF_CEL=""
+	IF_WIF="wlp2s0"
+	DISK="sdb"
 elif [[ $CONTROLLER=='T1' ]]
 then
     echo "Configuring for T1"
     INTERFACE='wlp6s0'
+	IF_ETH="eth2"
+	IF_CEL="mlan0"
+	IF_WIF="wlp6s0"
+	DISK="nvme0n1"
 elif [[ $CONTROLLER == 'RPI' ]]
 then
     echo "Configuring for RPI"
-    INTERFACE='eth0'
+	IF_ETH="eth0"
+	IF_CEL=""
+	IF_WIF="wlan0"
+	DISK="mmcblk0"
 fi
 
 while true; do
@@ -94,31 +102,23 @@ do
   then
 	CPU_TEMP="$(bc -l <<< $(sensors | awk 'FNR==9 {print $3+0}'))"
 	SSD_TEMP="$(bc -l <<< $(smartctl -d sntrealtek /dev/sdb -a | grep 'Temperature:' | awk '{print $2}'))"
-	CPU_LOAD="$(bc -l <<< $(top -b -n1 | grep 'Cpu(s)' | awk '{print $2 + $4}'))"
-	SSD_READ="$(bc -l <<< $(cat /proc/diskstats | grep "sdb " | awk '{print $6}'))"
-	SSD_WRITE="$(bc -l <<< $(cat /proc/diskstats | grep "sdb " | awk '{print $10}'))"
-	NET_IN="$(bc -l <<< $(ifstat  -i ${INTERFACE}  1 1 | awk 'FNR==3 {print $1+0}'))"
-	NET_OUT="$(bc -l <<< $(ifstat  -i ${INTERFACE}  1 1 | awk 'FNR==3 {print $2+0}'))"
   elif [[ $CONTROLLER=='T1' ]]
   then
 	CPU_TEMP="$(bc -l <<< $(sensors | grep 'Core 0' | awk '{print $3+0}'))"
 	SSD_TEMP="$(bc -l <<< $(sensors | grep 'Composite' | awk '{print $2+0}'))"
-	CPU_LOAD="$(bc -l <<< $(top -b -n1 | grep 'Cpu(s)' | awk '{print $2 + $4}'))"
-	SSD_READ="$(bc -l <<< $(cat /proc/diskstats | grep "nvme0n1 " | awk '{print $6}'))"
-	SSD_WRITE="$(bc -l <<< $(cat /proc/diskstats | grep "nvme0n1 " | awk '{print $10}'))"
-	NET_IN="$(bc -l <<< $(ifstat  -i ${INTERFACE}  1 1 | awk 'FNR==3 {print $1+0}'))"
-	NET_OUT="$(bc -l <<< $(ifstat  -i ${INTERFACE}  1 1 | awk 'FNR==3 {print $2+0}'))"
   elif [[ $CONTROLLER == 'RPI' ]]
   then
 	CPU_TEMP="$(bc -l <<< $(sensors | grep 'temp1:' | awk '{print $2+0}'))"
 	SSD_TEMP="$(bc -l <<< $(sensors | grep 'temp1:' | awk '{print $2+0}'))"
 	CPU_LOAD="$(bc -l <<< $(top -b -n1 | grep 'Cpu(s)' | awk '{print $2 + $4}'))"
-	SSD_READ="$(bc -l <<< $(cat /proc/diskstats | grep "mmcblk0 " | awk '{print $6}'))"
-	SSD_WRITE="$(bc -l <<< $(cat /proc/diskstats | grep "mmcblk0 " | awk '{print $10}'))"
-	NET_IN="$(bc -l <<< $(ifstat  -i ${INTERFACE}  1 1 | awk 'FNR==3 {print $1+0}'))"
-	NET_OUT="$(bc -l <<< $(ifstat  -i ${INTERFACE}  1 1 | awk 'FNR==3 {print $2+0}'))"
   fi
-  rrdtool updatev ${DB}.rrd N:$CPU_LOAD:$CPU_TEMP:$SSD_READ:$SSD_WRITE:$SSD_TEMP:$NET_IN:$NET_OUT
+  CPU_LOAD="$(bc -l <<< $(top -b -n1 | grep 'Cpu(s)' | awk '{print $2 + $4}'))"
+  SSD_READ="$(bc -l <<< $(cat /proc/diskstats | grep "${DISK} " | awk '{print $6}'))"
+  SSD_WRITE="$(bc -l <<< $(cat /proc/diskstats | grep "${DISK} " | awk '{print $10}'))"
+  if [ -z ${IF_CEL} ]; then NET_CEL=0; else NET_CEL="$(bc -l <<< $(cat /proc/net/dev | grep ${IF_CEL} | awk '{print $2 + $10}'))"; fi
+  if [ -z ${IF_WIF} ]; then NET_WIF=0; else NET_WIF="$(bc -l <<< $(cat /proc/net/dev | grep ${IF_WIF} | awk '{print $2 + $10}'))"; fi
+  if [ -z ${IF_ETH} ]; then NET_ETH=0; else NET_ETH="$(bc -l <<< $(cat /proc/net/dev | grep ${IF_ETH} | awk '{print $2 + $10}'))"; fi
+  rrdtool updatev ${DB}.rrd N:$CPU_LOAD:$CPU_TEMP:$SSD_READ:$SSD_WRITE:$SSD_TEMP:$NET_CEL:$NET_WIF:$NET_ETH
   sleep 2
 done
  

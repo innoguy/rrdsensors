@@ -11,7 +11,7 @@ if [ ${PIPESTATUS[0]} != 4 ]; then
     exit 1
 fi
 
-OPTS="hv:d:o:s:e:r:h:w"
+OPTS="hv:d:o:t:s:e:r:h:w"
 LONGOPTS="help,verbose:,database:,output:,start:,end:,rra:,height:,min-width:"
 print_help() {
 	cat <<EOF
@@ -22,6 +22,7 @@ E.g.: $(basename $0) --out ${HOME}/graph # produces graph.png
   -v, --verbose         show raw data on stdout
   -d, --database        base filename for the .rrd file
   -o, --output          base filename for the .png file
+  -t, --type            all, net or system in graph
   -s, --start           start time of graph (defaults to start of archive)
   -e, --end             end time of graph (defaults to end of archive)
   -r, --rra             rra index to use for first and last element   
@@ -38,7 +39,8 @@ fi
 # read getopt's output this way to handle the quoting right
 eval set -- "$PARSED"
 VERBOSE="0"
-OUT="graph"
+OUT1="graph_sys"
+OUT2="graph_net"
 DB="/var/log/sensors"
 ROWS="100000"
 TIME="60"
@@ -61,6 +63,10 @@ while true; do
 			;;
 		-o|--output)
 			OUT="$2"
+			shift 2
+			;;
+		-t|--type)
+			TYPE="$2"
 			shift 2
 			;;
 		-t|--time)
@@ -127,7 +133,7 @@ LINE_WIDTH=1
 ALPHA=30 # used in area RGBA
 
 rrdtool graph \
-    ${OUT}.png \
+    ${OUT1}.png \
     --title "Controller statistics normalised to their maximum values" \
     --watermark "$(date)" \
     --vertical-label "% of maximum" \
@@ -191,24 +197,50 @@ rrdtool graph \
         LINE0.5:ssd_temp_norm_avg${COLORS[4]}:dashes \
         GPRINT:ssd_temp_max:"(max\: %.2lf\g" \
         GPRINT:ssd_temp_avg:"(avg\: %.2lf)" \
+        COMMENT:"\n" 
+
+rrdtool graph \
+    ${OUT2}.png \
+    --title "Controller statistics normalised to their maximum values" \
+    --watermark "$(date)" \
+    --vertical-label "% of maximum" \
+    --slope-mode \
+    --alt-y-grid \
+    --left-axis-format "%.0lf%%" \
+    --rigid \
+    --start ${START} --end ${END} \
+    --width ${MIN_WIDTH} \
+    --height ${HEIGHT} \
+    --color CANVAS#181B1F \
+    --color BACK#111217 \
+    --color FONT#CCCCDC \
+    DEF:net_cel=${DB}.rrd:net_cel:AVERAGE \
+        VDEF:net_cel_max=net_cel,MAXIMUM \
+        VDEF:net_cel_avg=net_cel,AVERAGE \
+        CDEF:net_cel_norm=net_cel,net_cel_max,/,100,\* \
+        CDEF:net_cel_norm_avg=net_cel,POP,net_cel_avg,100,\*,net_cel_max,/ \
+        LINE1:net_cel_norm${COLORS[0]}:"%IFCEL\t" \
+        LINE0.5:net_cel_norm_avg${COLORS[0]}:dashes \
+        GPRINT:net_cel_max:"(max\: %.2lf KB/s\g" \
+        GPRINT:net_cel_avg:"(avg\: %.2lf KB/s)" \
         COMMENT:"\n" \
-    DEF:net_in=${DB}.rrd:net_in:AVERAGE \
-        VDEF:net_in_max=net_in,MAXIMUM \
-        VDEF:net_in_avg=net_in,AVERAGE \
-        CDEF:net_in_norm=net_in,net_in_max,/,100,\* \
-        CDEF:net_in_norm_avg=net_in,POP,net_in_avg,100,\*,net_in_max,/ \
-        LINE1:net_in_norm${COLORS[5]}:"%In\t" \
-        LINE0.5:net_in_norm_avg${COLORS[5]}:dashes \
-        GPRINT:net_in_max:"(max\: %.2lf KB/s\g" \
-        GPRINT:net_in_avg:"(avg\: %.2lf KB/s)" \
+    DEF:net_wif=${DB}.rrd:net_wif:AVERAGE \
+        VDEF:net_wif_max=net_wif,MAXIMUM \
+        VDEF:net_wif_avg=net_wif,AVERAGE \
+        CDEF:net_wif_norm=net_wif,net_wif_max,/,100,\* \
+        CDEF:net_wif_norm_avg=net_wif,POP,net_wif_avg,100,\*,net_wif_max,/ \
+        LINE1:net_wif_norm${COLORS[1]}:"%IFWIF\t" \
+        LINE0.5:net_wif_norm_avg${COLORS[1]}:dashes \
+        GPRINT:net_wif_max:"(max\: %.2lf KB/s\g" \
+        GPRINT:net_wif_avg:"(avg\: %.2lf KB/s)" \
         COMMENT:"\n" \
-    DEF:net_out=${DB}.rrd:net_out:AVERAGE \
-        VDEF:net_out_max=net_out,MAXIMUM \
-        VDEF:net_out_avg=net_out,AVERAGE \
-        CDEF:net_out_norm=net_out,net_out_max,/,100,\* \
-        CDEF:net_out_norm_avg=net_out,POP,net_out_avg,100,\*,net_out_max,/ \
-        LINE1:net_out_norm${COLORS[6]}:"%Out\t" \
-        LINE0.5:net_out_norm_avg${COLORS[6]}:dashes \
-        GPRINT:net_out_max:"(max\: %.2lf KB/s\g" \
-        GPRINT:net_out_avg:"(avg\: %.2lf KB/s)" \
-        COMMENT:"\n" \
+    DEF:net_eth=${DB}.rrd:net_eth:AVERAGE \
+        VDEF:net_eth_max=net_eth,MAXIMUM \
+        VDEF:net_eth_avg=net_eth,AVERAGE \
+        CDEF:net_eth_norm=net_eth,net_eth_max,/,100,\* \
+        CDEF:net_eth_norm_avg=net_eth,POP,net_eth_avg,100,\*,net_eth_max,/ \
+        LINE1:net_eth_norm${COLORS[2]}:"%IFETH\t" \
+        LINE0.5:net_eth_norm_avg${COLORS[2]}:dashes \
+        GPRINT:net_eth_max:"(max\: %.2lf KB/s\g" \
+        GPRINT:net_eth_avg:"(avg\: %.2lf KB/s)" \
+        COMMENT:"\n" 

@@ -2,10 +2,10 @@
 
 set -u
 
-sudo apt update && sudo apt install rrdtool smartmontools ifstat
-sudo cp ./run_rrd.sh /usr/bin/run_rrd.sh
-sudo cp ./rrd.service /etc/systemd/system/rrd.service
-sudo systemctl daemon-reload
+# sudo apt update && sudo apt install rrdtool smartmontools ifstat
+# sudo cp ./run_rrd.sh /usr/bin/run_rrd.sh
+# sudo cp ./rrd.service /etc/systemd/system/rrd.service
+# sudo systemctl daemon-reload
 
 # Argument parsing 
 ! getopt --test > /dev/null
@@ -74,9 +74,10 @@ rrdtool create ${DB}.rrd --start N --step 5 \
 	DS:ssd_read:COUNTER:5:U:U \
 	DS:ssd_write:COUNTER:5:U:U \
     DS:ssd_temp:GAUGE:5:U:U \
-    DS:net_in:GAUGE:5:U:U \
-    DS:net_out:GAUGE:5:U:U \
+    DS:net_cel:COUNTER:5:U:U \
+    DS:net_wif:COUNTER:5:U:U \
+    DS:net_eth:COUNTER:5:U:U \
     RRA:AVERAGE:0.5:1:17280 RRA:AVERAGE:0.5:12:43200 
 
-sudo systemctl start rrd
-sudo systemctl status rrd
+# sudo systemctl start rrd
+# sudo systemctl status rrd
