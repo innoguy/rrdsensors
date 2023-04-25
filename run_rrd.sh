@@ -2,8 +2,8 @@
 
 set -u
 
-CONTROLLER="NUC"
-#CONTROLLER="T1"
+#CONTROLLER="NUC"
+CONTROLLER="T1"
 #CONTROLLER="RPI"
 
 
@@ -40,14 +40,14 @@ eval set -- "$PARSED"
 VERBOSE="0"
 DB="/var/log/sensors"
 
-if [[ $CONTROLLER=='NUC' ]]
+if [[ $CONTROLLER == 'NUC' ]]
 then
     echo "Configuring for NUC"
     IF_ETH="eno1"
 	IF_CEL=""
 	IF_WIF="wlp2s0"
 	DISK="sdb"
-elif [[ $CONTROLLER=='T1' ]]
+elif [[ $CONTROLLER == 'T1' ]]
 then
     echo "Configuring for T1"
     INTERFACE='wlp6s0'
@@ -98,11 +98,11 @@ done
 
 while [ true ] 
 do
-  if [[ $CONTROLLER=='NUC' ]]
+  if [[ $CONTROLLER == 'NUC' ]]
   then
 	CPU_TEMP="$(bc -l <<< $(sensors | awk 'FNR==9 {print $3+0}'))"
 	SSD_TEMP="$(bc -l <<< $(smartctl -d sntrealtek /dev/sdb -a | grep 'Temperature:' | awk '{print $2}'))"
-  elif [[ $CONTROLLER=='T1' ]]
+  elif [[ $CONTROLLER == 'T1' ]]
   then
 	CPU_TEMP="$(bc -l <<< $(sensors | grep 'Core 0' | awk '{print $3+0}'))"
 	SSD_TEMP="$(bc -l <<< $(sensors | grep 'Composite' | awk '{print $2+0}'))"
