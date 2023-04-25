@@ -4,6 +4,8 @@ set -u
 
 CONTROLLER="NUC"
 #CONTROLLER="T1"
+#CONTROLLER="RPI"
+
 
 # Argument parsing 
 ! getopt --test > /dev/null
@@ -48,6 +50,10 @@ elif [[ $CONTROLLER=='T1' ]]
 then
     echo "Configuring for T1"
     INTERFACE='wlp6s0'
+elif [[ $CONTROLLER == 'RPI' ]]
+then
+    echo "Configuring for RPI"
+    INTERFACE='eth0'
 fi
 
 while true; do
@@ -100,6 +106,15 @@ do
 	CPU_LOAD="$(bc -l <<< $(top -b -n1 | grep 'Cpu(s)' | awk '{print $2 + $4}'))"
 	SSD_READ="$(bc -l <<< $(cat /proc/diskstats | grep "nvme0n1 " | awk '{print $6}'))"
 	SSD_WRITE="$(bc -l <<< $(cat /proc/diskstats | grep "nvme0n1 " | awk '{print $10}'))"
+	NET_IN="$(bc -l <<< $(ifstat  -i ${INTERFACE}  1 1 | awk 'FNR==3 {print $1+0}'))"
+	NET_OUT="$(bc -l <<< $(ifstat  -i ${INTERFACE}  1 1 | awk 'FNR==3 {print $2+0}'))"
+  elif [[ $CONTROLLER == 'RPI' ]]
+  then
+	CPU_TEMP="$(bc -l <<< $(sensors | grep 'temp1:' | awk '{print $2+0}'))"
+	SSD_TEMP="$(bc -l <<< $(sensors | grep 'temp1:' | awk '{print $2+0}'))"
+	CPU_LOAD="$(bc -l <<< $(top -b -n1 | grep 'Cpu(s)' | awk '{print $2 + $4}'))"
+	SSD_READ="$(bc -l <<< $(cat /proc/diskstats | grep "mmcblk0 " | awk '{print $6}'))"
+	SSD_WRITE="$(bc -l <<< $(cat /proc/diskstats | grep "mmcblk0 " | awk '{print $10}'))"
 	NET_IN="$(bc -l <<< $(ifstat  -i ${INTERFACE}  1 1 | awk 'FNR==3 {print $1+0}'))"
 	NET_OUT="$(bc -l <<< $(ifstat  -i ${INTERFACE}  1 1 | awk 'FNR==3 {print $2+0}'))"
   fi
