@@ -8,7 +8,7 @@ then
 	exit
 fi
 
-for i in rrdtool smartmontools ifstat
+for i in rrdtool smartmontools 
 do
     dpkg -s $i &> /dev/null
     if [ $? -ne 0 ]

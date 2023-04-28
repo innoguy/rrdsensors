@@ -4,6 +4,8 @@
 #CONTROLLER="T1"
 #CONTROLLER="RPI"
 #CONTROLLER="M1PRO"
+#CONTROLLER="A1"
+
 
 if [ -z "$CONTROLLER" ]
 then
@@ -51,6 +53,7 @@ then
 	IF_CEL=""
 	IF_WIF="wlp2s0"
 	DISK="sdb"
+	TZ_CPU="2"
 elif [[ $CONTROLLER == 'T1' ]]
 then
     echo "Configuring for T1"
@@ -58,6 +61,7 @@ then
 	IF_CEL="mlan0"
 	IF_WIF="wlp6s0"
 	DISK="nvme0n1"
+	TZ_CPU="2"
 elif [[ $CONTROLLER == 'RPI' ]]
 then
     echo "Configuring for RPI"
@@ -65,6 +69,7 @@ then
 	IF_CEL=""
 	IF_WIF="wlan0"
 	DISK="mmcblk0"
+	TZ_CPU="2"
 elif [[ $CONTROLLER == 'M1PRO' ]]
 then
     echo "Configuring for M1PRO"
@@ -72,6 +77,15 @@ then
 	IF_CEL=""
 	IF_WIF="wlp6s0"
 	DISK="mmcblk1"
+	TZ_CPU="2"
+elif [[ $CONTROLLER == 'A1' ]]
+then
+    echo "Configuring for A1"
+	IF_ETH="eth3"
+	IF_CEL=""
+	IF_WIF=""
+	DISK="mmcblk1"
+	TZ_CPU="0"
 fi
 
 while true; do
@@ -110,21 +124,21 @@ while [ true ]
 do
   if [[ $CONTROLLER == 'NUC' ]]
   then
-	CPU_TEMP="$(bc -l <<< $(sensors | awk 'FNR==9 {print $3+0}'))"
 	SSD_TEMP="$(bc -l <<< $(smartctl -d sntrealtek /dev/sdb -a | grep 'Temperature:' | awk '{print $2}'))"
   elif [[ $CONTROLLER == 'T1' ]]
   then
-	CPU_TEMP="$(bc -l <<< $(sensors | grep 'Core 0' | awk '{print $3+0}'))"
 	SSD_TEMP="$(bc -l <<< $(sensors | grep 'Composite' | awk '{print $2+0}'))"
   elif [[ $CONTROLLER == 'RPI' ]]
   then
-	CPU_TEMP="$(bc -l <<< $(sensors | grep 'temp1:' | awk '{print $2+0}'))"
 	SSD_TEMP="$(bc -l <<< $(sensors | grep 'temp1:' | awk '{print $2+0}'))"
   elif [[ $CONTROLLER == 'M1PRO' ]]
   then
-	CPU_TEMP="$(bc -l <<< $(sensors | grep 'Core 0:' | awk '{print $3+0}'))"
 	SSD_TEMP="$(bc -l <<< $(sensors | grep 'temp1:' | awk '{print $2+0}'))"
+  elif [[ $CONTROLLER == 'A1' ]]
+  then
+	SSD_TEMP="0"
   fi
+  CPU_TEMP="$(bc -l <<< $(cat /sys/class/thermal/thermal_zone"$TZ_CPU"/temp | awk '{print $0 / 1000}'))"
   CPU_LOAD="$(bc -l <<< $(top -b -n1 | grep 'Cpu(s)' | awk '{print $2 + $4}'))"
   SSD_READ="$(bc -l <<< $(cat /proc/diskstats | grep "${DISK} " | awk '{print $6}'))"
   SSD_WRITE="$(bc -l <<< $(cat /proc/diskstats | grep "${DISK} " | awk '{print $10}'))"
