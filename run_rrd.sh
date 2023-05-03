@@ -1,11 +1,7 @@
 #!/bin/bash
 
-#CONTROLLER="NUC"
-#CONTROLLER="T1"
-#CONTROLLER="RPI"
-#CONTROLLER="M1PRO"
-#CONTROLLER="A1"
 
+source .config
 
 if [ -z "$CONTROLLER" ]
 then
@@ -43,50 +39,6 @@ if [ ${PIPESTATUS[0]} != 0 ]; then
 fi
 # read getopt's output this way to handle the quoting right
 eval set -- "$PARSED"
-VERBOSE="0"
-DB="/var/log/sensors"
-
-if [[ $CONTROLLER == 'NUC' ]]
-then
-    echo "Configuring for NUC"
-    IF_ETH="eno1"
-	IF_CEL=""
-	IF_WIF="wlp2s0"
-	DISK="sdb"
-	TZ_CPU="2"
-elif [[ $CONTROLLER == 'T1' ]]
-then
-    echo "Configuring for T1"
-	IF_ETH="eth2"
-	IF_CEL="mlan0"
-	IF_WIF="wlp6s0"
-	DISK="nvme0n1"
-	TZ_CPU="2"
-elif [[ $CONTROLLER == 'RPI' ]]
-then
-    echo "Configuring for RPI"
-	IF_ETH="eth0"
-	IF_CEL=""
-	IF_WIF="wlan0"
-	DISK="mmcblk0"
-	TZ_CPU="2"
-elif [[ $CONTROLLER == 'M1PRO' ]]
-then
-    echo "Configuring for M1PRO"
-	IF_ETH="enp1s0"
-	IF_CEL=""
-	IF_WIF="wlp6s0"
-	DISK="mmcblk1"
-	TZ_CPU="2"
-elif [[ $CONTROLLER == 'A1' ]]
-then
-    echo "Configuring for A1"
-	IF_ETH="eth3"
-	IF_CEL=""
-	IF_WIF=""
-	DISK="mmcblk1"
-	TZ_CPU="0"
-fi
 
 while true; do
 	case "$1" in

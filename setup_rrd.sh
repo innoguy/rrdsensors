@@ -8,6 +8,88 @@ then
 	exit
 fi
 
+# Create config file
+echo "# Config file for rrdsensors" > .config
+
+echo "# Location of database file" >> .config
+echo "DB=/var/log/sensors" >> .config
+
+echo "# Where the graphs are stored" >> .config
+echo "OUT1=$PWD/graph_sys" >> .config
+echo "OUT2=$PWD/graph_net" >> .config
+
+echo "# Graph dimensions" >> .config
+echo "HEIGHT=800" >> .config
+echo "MIN_WIDTH=1000" >> .config
+
+echo "# System information" >> .config
+CPU="$(lscpu | grep 'Model\ name' | awk '{print $5}')"
+case ${CPU:0:8} in
+    "i5-4250U")
+        echo "CONTROLLER=NUC" >> .config
+		;;
+
+	"6305E")
+		echo "CONTROLLER=T1" >> .config
+		;;
+
+    "E395")
+		echo "CONTROLLER=M1PRO" >> .config
+		;;
+	*)
+		echo "Unrecognized controller type"
+		echo "CONTROLLER=Unknown" >> .config
+		exit
+		;; 
+esac
+
+IF_ETH=$(ip link | awk -F: '$0 !~ "lo|vir|wl|do|ve|^[^0-9]"{print $2;getline}' | sed 's/ //g' | sed 's/://g')
+echo "IF_ETH="$IF_ETH >> .config
+
+IF_WIF=$(ip link | awk '{print $2}' | grep -e ^wl | sed 's/ //g' | sed 's/://g')
+echo "IF_WIF="$IF_WIF >> .config
+
+IF_CEL=$(ip link | awk '{print $2}' | grep -e ^m | sed 's/ //g' | sed 's/://')
+echo "IF_CEL="$IF_CEL >> .config
+
+if [ -b "/dev/sdb" ]
+then
+    DISK="sdb"
+elif [ -b "/dev/nvme0n1" ]
+then
+    DISK="nvme0n1"
+elif [ -b "/dev/mmcblk0" ]
+then 
+    DISK="mmcblk0"
+else
+	DISK="Unknown"
+	echo "Unable to identify disk used. Please correct in .config file"
+fi
+echo "DISK="$DISK >> .config
+
+
+if [ -f /sys/class/thermal/thermal_zone2/temp ]
+then
+    TZ_CPU=2
+else
+	echo "Unable to identify CPU temperature sensor. Please correct in .config file"
+fi
+echo "TZ_CPU="$TZ_CPU >> .config
+
+
+cat .config
+
+while true; do
+    read -p "Is this data OK and do you want to proceed? " yn
+    case $yn in
+        [Yy]* ) break;;
+        [Nn]* ) exit;;
+        * ) echo "Please answer yes or no.";;
+    esac
+done
+
+source .config
+
 for i in rrdtool smartmontools 
 do
     dpkg -s $i &> /dev/null
@@ -18,6 +100,24 @@ do
 	fi
 done
 
+if [[ $CONTROLLER == 'NUC' ]]
+then
+    for i in smartmontools 
+    do
+        dpkg -s $i &> /dev/null
+        if [ $? -ne 0 ]
+	    then 
+	        echo "Please install $i using sudo apt install $i"
+	        exit 
+	    fi
+    done
+fi
+
+if [ ! -f "/usr/bin/run_rrd.sh" ]
+then
+    sudo cp $PWD/run_rrd.sh /usr/bin
+fi
+
 if [ ! -f "/usr/bin/run_rrd.sh" ]
 then
     echo "Please link or copy run_ssd.sh to /usr/bin/run_rrd.sh"
@@ -27,6 +127,11 @@ then
     echo "  Set the right value for the used DISK (nvme0n1, sdb, mmcblk0,...)"
     echo "  Check if the sensor calculations work correctly on your system"
     exit
+fi
+
+if [ ! -f "/etc/systemd/system/rrd.service" ]
+then
+    ln -s $PWD/rrd.service /etc/systemd/system/rrd.service
 fi
 
 if [ ! -f "/etc/systemd/system/rrd.service" ]
@@ -117,5 +222,6 @@ then
     exit
 fi
 
-echo "All set! Now either run the data collector run_rrd.sh manually or activate the systemd service with:"
-echo "    sudo systemctl daemon-reload && sudo systemctl start rrd && sudo systemctl status rrd"
+sudo systemctl daemon-reload
+sudo systemctl start rrd
+sudo systemctl status rrd

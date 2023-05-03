@@ -1,6 +1,7 @@
 #!/bin/bash
 
 set -u
+source .config
 
 ####################
 # argument parsing #
@@ -38,15 +39,8 @@ if [ ${PIPESTATUS[0]} != 0 ]; then
 fi
 # read getopt's output this way to handle the quoting right
 eval set -- "$PARSED"
-VERBOSE="0"
-OUT1="graph_sys"
-OUT2="graph_net"
-DB="/var/log/sensors"
-ROWS="100000"
 TIME="60"
 RRA="0"
-HEIGHT="800"
-MIN_WIDTH="1000"
 while true; do
 	case "$1" in
 		-h|--help)
