@@ -43,7 +43,7 @@ case ${CPU:0:8} in
 		;; 
 esac
 
-IF_ETH=$(ip link | awk -F: '$0 !~ "lo|vir|wl|do|ve|^[^0-9]"{print $2;getline}' | sed 's/ //g' | sed 's/://g')
+IF_ETH=$(ip link | awk '{print $2}' | grep -e ^eth | sed 's/ //g' | sed 's/://g')
 echo "IF_ETH="$IF_ETH >> .config
 
 IF_WIF=$(ip link | awk '{print $2}' | grep -e ^wl | sed 's/ //g' | sed 's/://g')
