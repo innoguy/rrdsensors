@@ -1,8 +1,5 @@
 #!/bin/bash
 
-
-source .config
-
 if [ -z "$CONTROLLER" ]
 then
     echo "CONTROLLER not yet set. Please uncomment the right one in run_ssh.sh"

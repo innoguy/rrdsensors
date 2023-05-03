@@ -30,7 +30,7 @@ create_config() {
 			echo "CONTROLLER=T1" >> .config
 			;;
 
-		"E395")
+		"E3950")
 			echo "CONTROLLER=M1PRO" >> .config
 			;;
 		*)
@@ -55,9 +55,9 @@ create_config() {
 	elif [ -b "/dev/nvme0n1" ]
 	then
 		DISK="nvme0n1"
-	elif [ -b "/dev/mmcblk0" ]
+	elif [ -b "/dev/mmcblk1" ]
 	then 
-		DISK="mmcblk0"
+		DISK="mmcblk1"
 	else
 		DISK="Unknown"
 		echo "Unable to identify disk used. Please correct in .config file"
@@ -68,6 +68,9 @@ create_config() {
 	if [ -f /sys/class/thermal/thermal_zone2/temp ]
 	then
 		TZ_CPU=2
+	elif [ -f /sys/class/thermal/thermal_zone0/temp ]
+	then	
+	    TZ_CPU=0
 	else
 		echo "Unable to identify CPU temperature sensor. Please correct in .config file"
 	fi
@@ -89,7 +92,6 @@ else
 fi
 
 cat .config
-
 while true; do
 	read -p "Is this data OK and do you want to proceed? " yn
 	case $yn in
@@ -101,7 +103,7 @@ done
 
 source .config
 
-for i in rrdtool smartmontools 
+for i in rrdtool
 do
     dpkg -s $i &> /dev/null
     if [ $? -ne 0 ]
@@ -128,7 +130,7 @@ if [ ! -f "/usr/bin/cfd_run_rrd.sh" ]
 then
     sudo cat $PWD/.config $PWD/run_rrd.sh > cfd_run_rrd.sh
 	sudo cp $PWD/cfd_run_rrd.sh /usr/bin
-	sudo chmod a+x /usr/bin/cfd_run_ssh.sh
+	sudo chmod a+x /usr/bin/cfd_run_rrd.sh
 fi
 
 if [ ! -f "/etc/systemd/system/rrd.service" ]
