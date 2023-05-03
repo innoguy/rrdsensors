@@ -4,7 +4,7 @@ DefaultDependencies=no
 After=network.target
 
 [Service]
-ExecStart=/usr/bin/run_rrd.sh 
+ExecStart=/usr/bin/cfd_run_rrd.sh 
 Restart=on-failure
 RestartSec=5s
 

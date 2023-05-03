@@ -8,83 +8,95 @@ then
 	exit
 fi
 
-# Create config file
-echo "# Config file for rrdsensors" > .config
+create_config() {
+	echo "#!/bin/bash" > .config
+	echo "# Location of database file" >> .config
+	echo "DB=/var/log/sensors" >> .config
+	echo "# Where the graphs are stored" >> .config
+	echo "OUT1=$PWD/graph_sys" >> .config
+	echo "OUT2=$PWD/graph_net" >> .config
+	echo "# Graph dimensions" >> .config
+	echo "HEIGHT=800" >> .config
+	echo "MIN_WIDTH=1000" >> .config
 
-echo "# Location of database file" >> .config
-echo "DB=/var/log/sensors" >> .config
+	echo "# System information" >> .config
+	CPU="$(lscpu | grep 'Model\ name' | awk '{print $5}')"
+	case ${CPU:0:8} in
+		"i5-4250U")
+			echo "CONTROLLER=NUC" >> .config
+			;;
 
-echo "# Where the graphs are stored" >> .config
-echo "OUT1=$PWD/graph_sys" >> .config
-echo "OUT2=$PWD/graph_net" >> .config
+		"6305E")
+			echo "CONTROLLER=T1" >> .config
+			;;
 
-echo "# Graph dimensions" >> .config
-echo "HEIGHT=800" >> .config
-echo "MIN_WIDTH=1000" >> .config
+		"E395")
+			echo "CONTROLLER=M1PRO" >> .config
+			;;
+		*)
+			echo "Unrecognized controller type"
+			echo "CONTROLLER=Unknown" >> .config
+			exit
+			;; 
+	esac
 
-echo "# System information" >> .config
-CPU="$(lscpu | grep 'Model\ name' | awk '{print $5}')"
-case ${CPU:0:8} in
-    "i5-4250U")
-        echo "CONTROLLER=NUC" >> .config
-		;;
+	IF_ETH=$(ip link | awk '{print $2}' | grep -e ^[eth,eno] | awk 'NR==1 {print $1}' | sed 's/ //g' | sed 's/://g')
+	echo "IF_ETH="$IF_ETH >> .config
 
-	"6305E")
-		echo "CONTROLLER=T1" >> .config
-		;;
+	IF_WIF=$(ip link | awk '{print $2}' | grep -e ^wl | sed 's/ //g' | sed 's/://g')
+	echo "IF_WIF="$IF_WIF >> .config
 
-    "E395")
-		echo "CONTROLLER=M1PRO" >> .config
-		;;
-	*)
-		echo "Unrecognized controller type"
-		echo "CONTROLLER=Unknown" >> .config
-		exit
-		;; 
-esac
+	IF_CEL=$(ip link | awk '{print $2}' | grep -e ^m | sed 's/ //g' | sed 's/://')
+	echo "IF_CEL="$IF_CEL >> .config
 
-IF_ETH=$(ip link | awk '{print $2}' | grep -e ^eth | sed 's/ //g' | sed 's/://g')
-echo "IF_ETH="$IF_ETH >> .config
+	if [ -b "/dev/sdb" ]
+	then
+		DISK="sdb"
+	elif [ -b "/dev/nvme0n1" ]
+	then
+		DISK="nvme0n1"
+	elif [ -b "/dev/mmcblk0" ]
+	then 
+		DISK="mmcblk0"
+	else
+		DISK="Unknown"
+		echo "Unable to identify disk used. Please correct in .config file"
+	fi
+	echo "DISK="$DISK >> .config
 
-IF_WIF=$(ip link | awk '{print $2}' | grep -e ^wl | sed 's/ //g' | sed 's/://g')
-echo "IF_WIF="$IF_WIF >> .config
 
-IF_CEL=$(ip link | awk '{print $2}' | grep -e ^m | sed 's/ //g' | sed 's/://')
-echo "IF_CEL="$IF_CEL >> .config
+	if [ -f /sys/class/thermal/thermal_zone2/temp ]
+	then
+		TZ_CPU=2
+	else
+		echo "Unable to identify CPU temperature sensor. Please correct in .config file"
+	fi
+	echo "TZ_CPU="$TZ_CPU >> .config
+}
 
-if [ -b "/dev/sdb" ]
+if [ -f $PWD/.config ]
 then
-    DISK="sdb"
-elif [ -b "/dev/nvme0n1" ]
-then
-    DISK="nvme0n1"
-elif [ -b "/dev/mmcblk0" ]
-then 
-    DISK="mmcblk0"
+    while true; do
+        read -p "Do you want to generate a new .config file? " yn
+        case $yn in
+            [Yy]* ) create_config;;
+            [Nn]* ) break;;
+            * ) echo "Please answer yes or no.";;
+        esac
+    done
 else
-	DISK="Unknown"
-	echo "Unable to identify disk used. Please correct in .config file"
+    create_config
 fi
-echo "DISK="$DISK >> .config
-
-
-if [ -f /sys/class/thermal/thermal_zone2/temp ]
-then
-    TZ_CPU=2
-else
-	echo "Unable to identify CPU temperature sensor. Please correct in .config file"
-fi
-echo "TZ_CPU="$TZ_CPU >> .config
 
 cat .config
 
 while true; do
-    read -p "Is this data OK and do you want to proceed? " yn
-    case $yn in
-        [Yy]* ) break;;
-        [Nn]* ) exit;;
-        * ) echo "Please answer yes or no.";;
-    esac
+	read -p "Is this data OK and do you want to proceed? " yn
+	case $yn in
+		[Yy]* ) break;;
+		[Nn]* ) exit;;
+		* ) echo "Please answer yes or no.";;
+	esac
 done
 
 source .config
@@ -112,25 +124,16 @@ then
     done
 fi
 
-if [ ! -f "/usr/bin/run_rrd.sh" ]
+if [ ! -f "/usr/bin/cfd_run_rrd.sh" ]
 then
-    sudo cp $PWD/run_rrd.sh /usr/bin
-fi
-
-if [ ! -f "/usr/bin/run_rrd.sh" ]
-then
-    echo "Please link or copy run_ssd.sh to /usr/bin/run_rrd.sh"
-    echo "Before doing so, check the following in file run_rrd.sh:"
-    echo "  Set the CONTROLLER variable to the right value (NUC, T1 or RPI)"
-    echo "  Set the right values for network interfaces IF_ETH, IF_CEL, IF_WIF"
-    echo "  Set the right value for the used DISK (nvme0n1, sdb, mmcblk0,...)"
-    echo "  Check if the sensor calculations work correctly on your system"
-    exit
+    sudo cat $PWD/.config $PWD/run_rrd.sh > cfd_run_rrd.sh
+	sudo cp $PWD/cfd_run_rrd.sh /usr/bin
+	sudo chmod a+x /usr/bin/cfd_run_ssh.sh
 fi
 
 if [ ! -f "/etc/systemd/system/rrd.service" ]
 then
-    ln -s $PWD/rrd.service /etc/systemd/system/rrd.service
+    echo ln -s $PWD/rrd.service /etc/systemd/system/rrd.service
 fi
 
 if [ ! -f "/etc/systemd/system/rrd.service" ]
