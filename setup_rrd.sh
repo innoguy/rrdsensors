@@ -76,7 +76,6 @@ else
 fi
 echo "TZ_CPU="$TZ_CPU >> .config
 
-
 cat .config
 
 while true; do
