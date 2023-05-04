@@ -83,7 +83,7 @@ do
 	  SSD_TEMP="$(bc -l <<< $(sensors | grep 'Composite' | awk '{print $2+0}'))"
 	elif [[ $DISK == 'sda' ]]
 	then 
-	  SSD_TEMP="$(bc -l <<< $(smartctl -d ata /dev/sda -a | grep 'Temperature:' | awk '{print $NF}'))"
+	  SSD_TEMP="$(bc -l <<< $(smartctl -d ata /dev/sda -a | grep 'Temperature' | awk '{print $NF}'))"
 	else
 	  SSD_TEMP=0
 	fi
@@ -104,6 +104,7 @@ do
   if [ -z ${IF_CEL} ]; then NET_CEL=0; else NET_CEL="$(bc -l <<< $(cat /proc/net/dev | grep ${IF_CEL} | awk '{printf "%.0f", $2 + $10}'))"; fi
   if [ -z ${IF_WIF} ]; then NET_WIF=0; else NET_WIF="$(bc -l <<< $(cat /proc/net/dev | grep ${IF_WIF} | awk '{printf "%.0f", $2 + $10}'))"; fi
   if [ -z ${IF_ETH} ]; then NET_ETH=0; else NET_ETH="$(bc -l <<< $(cat /proc/net/dev | grep ${IF_ETH} | awk '{printf "%.0f", $2 + $10}'))"; fi
+  # echo $CPU_LOAD:$CPU_TEMP:$SSD_READ:$SSD_WRITE:$SSD_TEMP:$NET_CEL:$NET_WIF:$NET_ETH
   rrdtool updatev ${DB}.rrd N:$CPU_LOAD:$CPU_TEMP:$SSD_READ:$SSD_WRITE:$SSD_TEMP:$NET_CEL:$NET_WIF:$NET_ETH
   sleep 20
 done
