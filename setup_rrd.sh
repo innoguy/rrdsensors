@@ -9,36 +9,30 @@ then
 fi
 
 create_config() {
-	echo "#!/bin/bash" > .config
-	echo "# Location of database file" >> .config
-	echo "DB=/var/log/sensors" >> .config
-	echo "# Where the graphs are stored" >> .config
-	echo "OUT1=$PWD/graph_sys" >> .config
-	echo "OUT2=$PWD/graph_net" >> .config
-	echo "# Graph dimensions" >> .config
-	echo "HEIGHT=800" >> .config
-	echo "MIN_WIDTH=1000" >> .config
-
-	echo "# System information" >> .config
-	CPU="$(lscpu | grep 'Model\ name' | awk '{print $5}')"
-	case ${CPU:0:8} in
-		"i5-4250U")
-			echo "CONTROLLER=NUC" >> .config
-			;;
-
-		"6305E")
-			echo "CONTROLLER=T1" >> .config
-			;;
-
-		"E3950")
-			echo "CONTROLLER=M1PRO" >> .config
-			;;
-		*)
-			echo "Unrecognized controller type"
-			echo "CONTROLLER=Unknown" >> .config
-			exit
-			;; 
-	esac
+    echo "#!/bin/bash" > .config
+    echo "# Location of database file" >> .config
+    echo "DB=/var/log/sensors" >> .config
+    echo "# Where the graphs are stored" >> .config
+    echo "OUT1=$PWD/graph_sys" >> .config
+    echo "OUT2=$PWD/graph_net" >> .config
+    echo "# Graph dimensions" >> .config
+    echo "HEIGHT=800" >> .config
+    echo "MIN_WIDTH=1000" >> .config
+    echo "# System information" >> .config
+    if [ $(lscpu | grep -c "6305E") -ge 1 ] 
+    then 
+        echo "CONTROLLER=T1" >> .config
+    elif [ $(lscpu | grep -c "E3950") -ge 1 ]
+    then
+        echo "CONTROLLER=M1PRO" >> .config
+    elif [ $(lscpu | grep -c "4250U") -ge 1 ]
+    then
+        echo "CONTROLLER=NUC" >> .config
+    else 
+        echo "Unrecognized controller type"
+        echo "CONTROLLER=Unknown" >> .config
+        exit
+    fi
 
 	IF_ETH=$(ip link | awk '{print $2}' | grep -e ^[eth,eno] | awk 'NR==1 {print $1}' | sed 's/ //g' | sed 's/://g')
 	echo "IF_ETH="$IF_ETH >> .config
@@ -227,7 +221,6 @@ rrdtool create ${DB}.rrd --start N --step 60 \
     DS:net_wif:COUNTER:60:U:U \
     DS:net_eth:COUNTER:60:U:U \
     RRA:AVERAGE:0.5:1:10080 RRA:AVERAGE:0.5:60:2160 
-
 
 
 if [ ! -f "${DB}.rrd" ]
