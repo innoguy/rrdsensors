@@ -79,6 +79,10 @@ do
   elif [[ $CONTROLLER == 'T1' ]]
   then
 	SSD_TEMP="$(bc -l <<< $(sensors | grep 'Composite' | awk '{print $2+0}'))"
+	if [[ $SSD_TEMP == "" ]]
+	then
+	    SSD_TEMP="$(bc -l <<< $(sensors | grep 'temp1:' | awk 'NR==1 {print $2+0}'))"
+	fi
   elif [[ $CONTROLLER == 'RPI' ]]
   then
 	SSD_TEMP="$(bc -l <<< $(sensors | grep 'temp1:' | awk '{print $2+0}'))"
