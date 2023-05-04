@@ -52,6 +52,9 @@ create_config() {
 	elif [ -b "/dev/mmcblk1" ]
 	then 
 		DISK="mmcblk1"
+    elif [ -b "/dev/sda" ]
+	then
+		DISK="sda"
 	else
 		DISK="Unknown"
 		echo "Unable to identify disk used. Please correct in .config file"

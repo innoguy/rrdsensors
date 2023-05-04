@@ -78,10 +78,14 @@ do
 	SSD_TEMP="$(bc -l <<< $(smartctl -d sntrealtek /dev/sdb -a | grep 'Temperature:' | awk '{print $2}'))"
   elif [[ $CONTROLLER == 'T1' ]]
   then
-	SSD_TEMP="$(bc -l <<< $(sensors | grep 'Composite' | awk '{print $2+0}'))"
-	if [[ $SSD_TEMP == "" ]]
+    if [[ $DISK == 'nvme0n1' ]]
 	then
-	    SSD_TEMP="$(bc -l <<< $(sensors | grep 'temp1:' | awk 'NR==1 {print $2+0}'))"
+	  SSD_TEMP="$(bc -l <<< $(sensors | grep 'Composite' | awk '{print $2+0}'))"
+	elif [[ $DISK == 'sda' ]]
+	then 
+	  SSD_TEMP="$(bc -l <<< $(smartctl -d ata /dev/sda -a | grep 'Temperature:' | awk '{print $NF}'))"
+	else
+	  SSD_TEMP=0
 	fi
   elif [[ $CONTROLLER == 'RPI' ]]
   then
