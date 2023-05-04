@@ -1,6 +1,6 @@
 #!/bin/bash
 
-source .config
+source /etc/systemd/system/rrd.config
 
 if [ -z "$CONTROLLER" ]
 then

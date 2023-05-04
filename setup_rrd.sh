@@ -144,6 +144,7 @@ fi
 if [ ! -f "/etc/systemd/system/rrd.service" ]
 then
     ln -s $PWD/rrd.service /etc/systemd/system/rrd.service
+    ln -s $PWD/.config /etc/systemd/system/rrd.config
 fi
 
 if [ ! -f "/etc/systemd/system/rrd.service" ]
