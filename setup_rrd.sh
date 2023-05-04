@@ -126,16 +126,24 @@ then
     done
 fi
 
-if [ ! -f "/usr/bin/cfd_run_rrd.sh" ]
+if [ ! -f "$PWD/rrd.service" ]
 then
-    sudo cat $PWD/.config $PWD/run_rrd.sh > cfd_run_rrd.sh
-	sudo cp $PWD/cfd_run_rrd.sh /usr/bin
-	sudo chmod a+x /usr/bin/cfd_run_rrd.sh
+	echo "[Unit]" > rrd.service
+	echo "Description=Log sensor values to round robin database" >> rrd.service
+	echo "DefaultDependencies=no" >> rrd.service
+	echo "After=network.target" >> rrd.service
+	echo "" >> rrd.service
+	echo "[Service]" >> rrd.service
+	echo "ExecStart=$PWD/run_rrd.sh " >> rrd.service
+	echo "Restart=on-failure" >> rrd.service
+	echo "RestartSec=5s" >> rrd.service
+	echo "[Install]" >> rrd.service
+    echo "WantedBy=multi-user.target" >> rrd.service
 fi
 
 if [ ! -f "/etc/systemd/system/rrd.service" ]
 then
-    echo ln -s $PWD/rrd.service /etc/systemd/system/rrd.service
+    ln -s $PWD/rrd.service /etc/systemd/system/rrd.service
 fi
 
 if [ ! -f "/etc/systemd/system/rrd.service" ]
@@ -206,18 +214,20 @@ while true; do
 	esac
 done
 
-# Store 24 hours every 5 sec (17280 5s intervals)
-# Store 30 days every minute (43200 (12 x 5s) intervals)
-rrdtool create ${DB}.rrd --start N --step 5 \
-    DS:cpu_load:GAUGE:5:U:U \
-    DS:cpu_temp:GAUGE:5:U:U \
-	DS:ssd_read:COUNTER:5:U:U \
-	DS:ssd_write:COUNTER:5:U:U \
-    DS:ssd_temp:GAUGE:5:U:U \
-    DS:net_cel:COUNTER:5:U:U \
-    DS:net_wif:COUNTER:5:U:U \
-    DS:net_eth:COUNTER:5:U:U \
-    RRA:AVERAGE:0.5:1:17280 RRA:AVERAGE:0.5:12:43200 
+# Store 7 days every 1 min (10080 1min intervals)
+# Store 3 months every 1 hour (2160 1h intervals)
+rrdtool create ${DB}.rrd --start N --step 60 \
+    DS:cpu_load:GAUGE:60:U:U \
+    DS:cpu_temp:GAUGE:60:U:U \
+	DS:ssd_read:COUNTER:60:U:U \
+	DS:ssd_write:COUNTER:60:U:U \
+    DS:ssd_temp:GAUGE:60:U:U \
+    DS:net_cel:COUNTER:60:U:U \
+    DS:net_wif:COUNTER:60:U:U \
+    DS:net_eth:COUNTER:60:U:U \
+    RRA:AVERAGE:0.5:1:10080 RRA:AVERAGE:0.5:60:2160 
+
+
 
 if [ ! -f "${DB}.rrd" ]
 then

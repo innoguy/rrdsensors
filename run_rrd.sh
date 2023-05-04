@@ -1,5 +1,7 @@
 #!/bin/bash
 
+source .config
+
 if [ -z "$CONTROLLER" ]
 then
     echo "CONTROLLER not yet set. Please uncomment the right one in run_ssh.sh"
@@ -95,6 +97,6 @@ do
   if [ -z ${IF_WIF} ]; then NET_WIF=0; else NET_WIF="$(bc -l <<< $(cat /proc/net/dev | grep ${IF_WIF} | awk '{printf "%.0f", $2 + $10}'))"; fi
   if [ -z ${IF_ETH} ]; then NET_ETH=0; else NET_ETH="$(bc -l <<< $(cat /proc/net/dev | grep ${IF_ETH} | awk '{printf "%.0f", $2 + $10}'))"; fi
   rrdtool updatev ${DB}.rrd N:$CPU_LOAD:$CPU_TEMP:$SSD_READ:$SSD_WRITE:$SSD_TEMP:$NET_CEL:$NET_WIF:$NET_ETH
-  sleep 2
+  sleep 20
 done
  
