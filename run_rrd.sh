@@ -104,12 +104,26 @@ do
   if [ -z ${IF_CEL} ]; then NET_CEL=0; else NET_CEL="$(bc -l <<< $(cat /proc/net/dev | grep ${IF_CEL} | awk '{printf "%.0f", $2 + $10}'))"; fi
   if [ -z ${IF_WIF} ]; then NET_WIF=0; else NET_WIF="$(bc -l <<< $(cat /proc/net/dev | grep ${IF_WIF} | awk '{printf "%.0f", $2 + $10}'))"; fi
   if [ -z ${IF_ETH} ]; then NET_ETH=0; else NET_ETH="$(bc -l <<< $(cat /proc/net/dev | grep ${IF_ETH} | awk '{printf "%.0f", $2 + $10}'))"; fi
-  APP_CPU="$(bc -l <<< $(ps aux | grep firefox |  awk 'BEGIN { sum=0 }  { sum+=$3 } END { print sum }'))"
-  APP_MEM="$(bc -l <<< $(ps aux | grep firefox |  awk 'BEGIN { sum=0 }  { sum+=$4 } END { print sum }'))"
-  if [[ $APP_CPU == "" ]]; then APP_CPU=0; fi
-  if [[ $APP_MEM == "" ]]; then APP_CPU=0; fi
-  echo $CPU_LOAD:$CPU_TEMP:$SSD_READ:$SSD_WRITE:$SSD_TEMP:$NET_CEL:$NET_WIF:$NET_ETH:$APP_CPU:$APP_MEM
-  rrdtool updatev ${DB}.rrd N:$CPU_LOAD:$CPU_TEMP:$SSD_READ:$SSD_WRITE:$SSD_TEMP:$NET_CEL:$NET_WIF:$NET_ETH:$APP_CPU:$APP_MEM
+  APP1_CPU="$(bc -l <<< $(ps aux | grep $APP1 |  awk 'BEGIN { sum=0 }  { sum+=$3 } END { print sum }'))"
+  APP1_MEM="$(bc -l <<< $(ps aux | grep $APP1 |  awk 'BEGIN { sum=0 }  { sum+=$4 } END { print sum }'))"
+  APP2_CPU="$(bc -l <<< $(ps aux | grep $APP2 |  awk 'BEGIN { sum=0 }  { sum+=$3 } END { print sum }'))"
+  APP2_MEM="$(bc -l <<< $(ps aux | grep $APP2 |  awk 'BEGIN { sum=0 }  { sum+=$4 } END { print sum }'))"
+  APP3_CPU="$(bc -l <<< $(ps aux | grep $APP3 |  awk 'BEGIN { sum=0 }  { sum+=$3 } END { print sum }'))"
+  APP3_MEM="$(bc -l <<< $(ps aux | grep $APP3 |  awk 'BEGIN { sum=0 }  { sum+=$4 } END { print sum }'))"
+  APP4_CPU="$(bc -l <<< $(ps aux | grep $APP4 |  awk 'BEGIN { sum=0 }  { sum+=$3 } END { print sum }'))"
+  APP4_MEM="$(bc -l <<< $(ps aux | grep $APP4 |  awk 'BEGIN { sum=0 }  { sum+=$4 } END { print sum }'))"
+ 
+  if [[ $APP1_CPU == "" ]]; then APP1_CPU=0; fi
+  if [[ $APP1_MEM == "" ]]; then APP1_MEM=0; fi
+  if [[ $APP2_CPU == "" ]]; then APP2_CPU=0; fi
+  if [[ $APP2_MEM == "" ]]; then APP2_MEM=0; fi
+  if [[ $APP3_CPU == "" ]]; then APP3_CPU=0; fi
+  if [[ $APP3_MEM == "" ]]; then APP3_MEM=0; fi
+  if [[ $APP4_CPU == "" ]]; then APP4_CPU=0; fi
+  if [[ $APP4_MEM == "" ]]; then APP4_MEM=0; fi
+
+  echo $CPU_LOAD:$CPU_TEMP:$SSD_READ:$SSD_WRITE:$SSD_TEMP:$NET_CEL:$NET_WIF:$NET_ETH:$APP1_CPU:$APP1_MEM:$APP2_CPU:$APP2_MEM:$APP3_CPU:$APP3_MEM:$APP4_CPU:$APP4_MEM
+  rrdtool updatev ${DB}.rrd N:$CPU_LOAD:$CPU_TEMP:$SSD_READ:$SSD_WRITE:$SSD_TEMP:$NET_CEL:$NET_WIF:$NET_ETH:$APP1_CPU:$APP1_MEM:$APP2_CPU:$APP2_MEM:$APP3_CPU:$APP3_MEM:$APP4_CPU:$APP4_MEM
   sleep 20
 done
  

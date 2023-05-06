@@ -254,24 +254,83 @@ rrdtool graph \
     --color CANVAS#181B1F \
     --color BACK#111217 \
     --color FONT#CCCCDC \
-    DEF:app_cpu=${DB}.rrd:app_cpu:AVERAGE \
-        VDEF:app_cpu_max=app_cpu,MAXIMUM \
-        VDEF:app_cpu_avg=app_cpu,AVERAGE \
-        CDEF:app_cpu_norm=app_cpu,app_cpu_max,/,100,\* \
-        CDEF:app_cpu_norm_avg=app_cpu,POP,app_cpu_avg,100,\*,app_cpu_max,/ \
-        LINE1:app_cpu_norm${COLORS[0]}:"%APPCPU\t" \
-        LINE0.5:app_cpu_norm_avg${COLORS[0]}:dashes \
-        GPRINT:app_cpu_max:"max\: %.2lf\t" \
-        GPRINT:app_cpu_avg:"(avg\: %.2lf)" \
+    DEF:app1_cpu=${DB}.rrd:app1_cpu:AVERAGE \
+        VDEF:app1_cpu_max=app1_cpu,MAXIMUM \
+        VDEF:app1_cpu_avg=app1_cpu,AVERAGE \
+        CDEF:app1_cpu_norm=app1_cpu,app1_cpu_max,/,100,\* \
+        CDEF:app1_cpu_norm_avg=app1_cpu,POP,app1_cpu_avg,100,\*,app1_cpu_max,/ \
+        LINE1:app1_cpu_norm${COLORS[0]}:"%${APP1}CPU\t" \
+        LINE0.5:app1_cpu_norm_avg${COLORS[0]}:dashes \
+        GPRINT:app1_cpu_max:"max\: %.2lf\t" \
+        GPRINT:app1_cpu_avg:"(avg\: %.2lf)" \
         COMMENT:"\n" \
-    DEF:app_mem=${DB}.rrd:app_mem:AVERAGE \
-        VDEF:app_mem_max=app_mem,MAXIMUM \
-        VDEF:app_mem_avg=app_mem,AVERAGE \
-        CDEF:app_mem_norm=app_mem,app_mem_max,/,100,\* \
-        CDEF:app_mem_norm_avg=app_mem,POP,app_mem_avg,100,\*,app_mem_max,/ \
-        LINE1:app_mem_norm${COLORS[1]}:"%APPMEM\t" \
-        LINE0.5:app_mem_norm_avg${COLORS[1]}:dashes \
-        GPRINT:app_mem_max:"max\: %.2lf\t" \
-        GPRINT:app_mem_avg:"(avg\: %.2lf)" \
+    DEF:app1_mem=${DB}.rrd:app1_mem:AVERAGE \
+        VDEF:app1_mem_max=app1_mem,MAXIMUM \
+        VDEF:app1_mem_avg=app1_mem,AVERAGE \
+        CDEF:app1_mem_norm=app1_mem,app1_mem_max,/,100,\* \
+        CDEF:app1_mem_norm_avg=app1_mem,POP,app1_mem_avg,100,\*,app1_mem_max,/ \
+        LINE1:app1_mem_norm${COLORS[1]}:"%${APP1}MEM\t" \
+        LINE0.5:app1_mem_norm_avg${COLORS[1]}:dashes \
+        GPRINT:app1_mem_max:"max\: %.2lf\t" \
+        GPRINT:app1_mem_avg:"(avg\: %.2lf)" \
         COMMENT:"\n" \
- 
+    DEF:app2_cpu=${DB}.rrd:app2_cpu:AVERAGE \
+        VDEF:app2_cpu_max=app2_cpu,MAXIMUM \
+        VDEF:app2_cpu_avg=app2_cpu,AVERAGE \
+        CDEF:app2_cpu_norm=app2_cpu,app2_cpu_max,/,100,\* \
+        CDEF:app2_cpu_norm_avg=app2_cpu,POP,app2_cpu_avg,100,\*,app2_cpu_max,/ \
+        LINE1:app2_cpu_norm${COLORS[2]}:"%${APP2}CPU\t" \
+        LINE0.5:app2_cpu_norm_avg${COLORS[2]}:dashes \
+        GPRINT:app2_cpu_max:"max\: %.2lf\t" \
+        GPRINT:app2_cpu_avg:"(avg\: %.2lf)" \
+        COMMENT:"\n" \
+    DEF:app2_mem=${DB}.rrd:app2_mem:AVERAGE \
+        VDEF:app2_mem_max=app2_mem,MAXIMUM \
+        VDEF:app2_mem_avg=app2_mem,AVERAGE \
+        CDEF:app2_mem_norm=app2_mem,app2_mem_max,/,100,\* \
+        CDEF:app2_mem_norm_avg=app2_mem,POP,app2_mem_avg,100,\*,app2_mem_max,/ \
+        LINE1:app2_mem_norm${COLORS[3]}:"%${APP2}MEM\t" \
+        LINE0.5:app2_mem_norm_avg${COLORS[3]}:dashes \
+        GPRINT:app2_mem_max:"max\: %.2lf\t" \
+        GPRINT:app2_mem_avg:"(avg\: %.2lf)" \
+        COMMENT:"\n" \
+    DEF:app3_cpu=${DB}.rrd:app3_cpu:AVERAGE \
+        VDEF:app3_cpu_max=app3_cpu,MAXIMUM \
+        VDEF:app3_cpu_avg=app3_cpu,AVERAGE \
+        CDEF:app3_cpu_norm=app3_cpu,app3_cpu_max,/,100,\* \
+        CDEF:app3_cpu_norm_avg=app3_cpu,POP,app3_cpu_avg,100,\*,app3_cpu_max,/ \
+        LINE1:app3_cpu_norm${COLORS[4]}:"%${APP3}CPU\t" \
+        LINE0.5:app3_cpu_norm_avg${COLORS[4]}:dashes \
+        GPRINT:app3_cpu_max:"max\: %.2lf\t" \
+        GPRINT:app3_cpu_avg:"(avg\: %.2lf)" \
+        COMMENT:"\n" \
+    DEF:app3_mem=${DB}.rrd:app3_mem:AVERAGE \
+        VDEF:app3_mem_max=app3_mem,MAXIMUM \
+        VDEF:app3_mem_avg=app3_mem,AVERAGE \
+        CDEF:app3_mem_norm=app3_mem,app3_mem_max,/,100,\* \
+        CDEF:app3_mem_norm_avg=app3_mem,POP,app3_mem_avg,100,\*,app3_mem_max,/ \
+        LINE1:app3_mem_norm${COLORS[5]}:"%${APP3}MEM\t" \
+        LINE0.5:app3_mem_norm_avg${COLORS[5]}:dashes \
+        GPRINT:app3_mem_max:"max\: %.2lf\t" \
+        GPRINT:app3_mem_avg:"(avg\: %.2lf)" \
+        COMMENT:"\n" \
+    DEF:app4_cpu=${DB}.rrd:app4_cpu:AVERAGE \
+        VDEF:app4_cpu_max=app4_cpu,MAXIMUM \
+        VDEF:app4_cpu_avg=app4_cpu,AVERAGE \
+        CDEF:app4_cpu_norm=app4_cpu,app4_cpu_max,/,100,\* \
+        CDEF:app4_cpu_norm_avg=app4_cpu,POP,app4_cpu_avg,100,\*,app4_cpu_max,/ \
+        LINE1:app4_cpu_norm${COLORS[6]}:"%${APP4}CPU\t" \
+        LINE0.5:app4_cpu_norm_avg${COLORS[6]}:dashes \
+        GPRINT:app4_cpu_max:"max\: %.2lf\t" \
+        GPRINT:app4_cpu_avg:"(avg\: %.2lf)" \
+        COMMENT:"\n" \
+    DEF:app4_mem=${DB}.rrd:app4_mem:AVERAGE \
+        VDEF:app4_mem_max=app4_mem,MAXIMUM \
+        VDEF:app4_mem_avg=app4_mem,AVERAGE \
+        CDEF:app4_mem_norm=app4_mem,app4_mem_max,/,100,\* \
+        CDEF:app4_mem_norm_avg=app4_mem,POP,app4_mem_avg,100,\*,app4_mem_max,/ \
+        LINE1:app4_mem_norm${COLORS[7]}:"%${APP4}MEM\t" \
+        LINE0.5:app4_mem_norm_avg${COLORS[7]}:dashes \
+        GPRINT:app4_mem_max:"max\: %.2lf\t" \
+        GPRINT:app4_mem_avg:"(avg\: %.2lf)" \
+        COMMENT:"\n" \

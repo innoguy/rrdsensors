@@ -19,6 +19,11 @@ create_config() {
     echo "# Graph dimensions" >> .config
     echo "HEIGHT=800" >> .config
     echo "MIN_WIDTH=1000" >> .config
+	echo "# Applications to monitor" >> .config
+	echo "APP1=AppRun" >> .config
+	echo "APP2=screenhub-player" >> .config
+	echo "APP3=anydesk" >> .config
+	echo "APP4=teamviewer" >> .config
     echo "# System information" >> .config
     if [ $(lscpu | grep -c "6305E") -ge 1 ] 
     then 
@@ -224,8 +229,14 @@ rrdtool create ${DB}.rrd --start N --step 60 \
     DS:net_cel:COUNTER:60:U:U \
     DS:net_wif:COUNTER:60:U:U \
     DS:net_eth:COUNTER:60:U:U \
-    DS:app_cpu:GAUGE:60:U:U \
-    DS:app_mem:GAUGE:60:U:U \
+    DS:app1_cpu:GAUGE:60:U:U \
+    DS:app1_mem:GAUGE:60:U:U \
+    DS:app2_cpu:GAUGE:60:U:U \
+    DS:app2_mem:GAUGE:60:U:U \
+    DS:app3_cpu:GAUGE:60:U:U \
+    DS:app3_mem:GAUGE:60:U:U \
+    DS:app4_cpu:GAUGE:60:U:U \
+    DS:app4_mem:GAUGE:60:U:U \
     RRA:AVERAGE:0.5:1:10080 RRA:AVERAGE:0.5:60:2160 
 
 
