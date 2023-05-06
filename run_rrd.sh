@@ -83,7 +83,7 @@ do
 	  SSD_TEMP="$(bc -l <<< $(sensors | grep 'Composite' | awk '{print $2+0}'))"
 	elif [[ $DISK == 'sda' ]]
 	then 
-	  SSD_TEMP="$(bc -l <<< $(smartctl -d ata /dev/sda -a | grep 'Temperature' | awk '{print $NF}'))"
+	  SSD_TEMP="$(bc -l <<< $(smartctl -d ata /dev/sda -a | grep 'Temperature' | awk '{print $10}'))"
 	else
 	  SSD_TEMP=0
 	fi
