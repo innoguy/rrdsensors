@@ -104,14 +104,14 @@ do
   if [ -z ${IF_CEL} ]; then NET_CEL=0; else NET_CEL="$(bc -l <<< $(cat /proc/net/dev | grep ${IF_CEL} | awk '{printf "%.0f", $2 + $10}'))"; fi
   if [ -z ${IF_WIF} ]; then NET_WIF=0; else NET_WIF="$(bc -l <<< $(cat /proc/net/dev | grep ${IF_WIF} | awk '{printf "%.0f", $2 + $10}'))"; fi
   if [ -z ${IF_ETH} ]; then NET_ETH=0; else NET_ETH="$(bc -l <<< $(cat /proc/net/dev | grep ${IF_ETH} | awk '{printf "%.0f", $2 + $10}'))"; fi
-  APP1_CPU="$(bc -l <<< $(ps aux | grep $APP1 |  awk 'BEGIN { sum=0 }  { sum+=$3 } END { print sum }'))"
-  APP1_MEM="$(bc -l <<< $(ps aux | grep $APP1 |  awk 'BEGIN { sum=0 }  { sum+=$4 } END { print sum }'))"
-  APP2_CPU="$(bc -l <<< $(ps aux | grep $APP2 |  awk 'BEGIN { sum=0 }  { sum+=$3 } END { print sum }'))"
-  APP2_MEM="$(bc -l <<< $(ps aux | grep $APP2 |  awk 'BEGIN { sum=0 }  { sum+=$4 } END { print sum }'))"
-  APP3_CPU="$(bc -l <<< $(ps aux | grep $APP3 |  awk 'BEGIN { sum=0 }  { sum+=$3 } END { print sum }'))"
-  APP3_MEM="$(bc -l <<< $(ps aux | grep $APP3 |  awk 'BEGIN { sum=0 }  { sum+=$4 } END { print sum }'))"
-  APP4_CPU="$(bc -l <<< $(ps aux | grep $APP4 |  awk 'BEGIN { sum=0 }  { sum+=$3 } END { print sum }'))"
-  APP4_MEM="$(bc -l <<< $(ps aux | grep $APP4 |  awk 'BEGIN { sum=0 }  { sum+=$4 } END { print sum }'))"
+  APP1_CPU="$(bc -l <<< $(ps aux | grep $APP1_PRC |  awk 'BEGIN { sum=0 }  { sum+=$3 } END { print sum }'))"
+  APP1_MEM="$(bc -l <<< $(ps aux | grep $APP1_PRC |  awk 'BEGIN { sum=0 }  { sum+=$4 } END { print sum }'))"
+  APP2_CPU="$(bc -l <<< $(ps aux | grep $APP2_PRC |  awk 'BEGIN { sum=0 }  { sum+=$3 } END { print sum }'))"
+  APP2_MEM="$(bc -l <<< $(ps aux | grep $APP2_PRC |  awk 'BEGIN { sum=0 }  { sum+=$4 } END { print sum }'))"
+  APP3_CPU="$(bc -l <<< $(ps aux | grep $APP3_PRC |  awk 'BEGIN { sum=0 }  { sum+=$3 } END { print sum }'))"
+  APP3_MEM="$(bc -l <<< $(ps aux | grep $APP3_PRC |  awk 'BEGIN { sum=0 }  { sum+=$4 } END { print sum }'))"
+  APP4_CPU="$(bc -l <<< $(ps aux | grep $APP4_PRC |  awk 'BEGIN { sum=0 }  { sum+=$3 } END { print sum }'))"
+  APP4_MEM="$(bc -l <<< $(ps aux | grep $APP4_PRC |  awk 'BEGIN { sum=0 }  { sum+=$4 } END { print sum }'))"
  
   if [[ $APP1_CPU == "" ]]; then APP1_CPU=0; fi
   if [[ $APP1_MEM == "" ]]; then APP1_MEM=0; fi

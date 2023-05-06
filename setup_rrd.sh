@@ -20,10 +20,14 @@ create_config() {
     echo "HEIGHT=800" >> .config
     echo "MIN_WIDTH=1000" >> .config
 	echo "# Applications to monitor" >> .config
-	echo "APP1=AppRun" >> .config
-	echo "APP2=screenhub-player" >> .config
-	echo "APP3=anydesk" >> .config
-	echo "APP4=teamviewer" >> .config
+	echo "APP1_PRC=AppRun" >> .config
+	echo "APP1_TXT=Nucleus" >> .config
+	echo "APP2_PRC=screenhub-player" >> .config
+	echo "APP2_TXT=Player" >> .config
+	echo "APP3_PRC=anydesk" >> .config
+	echo "APP3_TXT=Anydesk" >> .config
+	echo "APP4_PRC=teamviewer" >> .config
+    echo "APP4_TXT=Teamviewer" >> .config
     echo "# System information" >> .config
     if [ $(lscpu | grep -c "6305E") -ge 1 ] 
     then 
