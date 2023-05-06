@@ -238,3 +238,40 @@ rrdtool graph \
         GPRINT:net_eth_max:"(max\: %.2lf KB/s\g" \
         GPRINT:net_eth_avg:"(avg\: %.2lf KB/s)" \
         COMMENT:"\n" 
+
+rrdtool graph \
+    ${OUT3}.png \
+    --title "Controller statistics normalised to their maximum values" \
+    --watermark "$(date)" \
+    --vertical-label "% of maximum" \
+    --slope-mode \
+    --alt-y-grid \
+    --left-axis-format "%.0lf%%" \
+    --rigid \
+    --start ${START} --end ${END} \
+    --width ${MIN_WIDTH} \
+    --height ${HEIGHT} \
+    --color CANVAS#181B1F \
+    --color BACK#111217 \
+    --color FONT#CCCCDC \
+    DEF:app_cpu=${DB}.rrd:app_cpu:AVERAGE \
+        VDEF:app_cpu_max=app_cpu,MAXIMUM \
+        VDEF:app_cpu_avg=app_cpu,AVERAGE \
+        CDEF:app_cpu_norm=app_cpu,app_cpu_max,/,100,\* \
+        CDEF:app_cpu_norm_avg=app_cpu,POP,app_cpu_avg,100,\*,app_cpu_max,/ \
+        LINE1:app_cpu_norm${COLORS[0]}:"%APPCPU\t" \
+        LINE0.5:app_cpu_norm_avg${COLORS[0]}:dashes \
+        GPRINT:app_cpu_max:"max\: %.2lf\t" \
+        GPRINT:app_cpu_avg:"(avg\: %.2lf)" \
+        COMMENT:"\n" \
+    DEF:app_mem=${DB}.rrd:app_mem:AVERAGE \
+        VDEF:app_mem_max=app_mem,MAXIMUM \
+        VDEF:app_mem_avg=app_mem,AVERAGE \
+        CDEF:app_mem_norm=app_mem,app_mem_max,/,100,\* \
+        CDEF:app_mem_norm_avg=app_mem,POP,app_mem_avg,100,\*,app_mem_max,/ \
+        LINE1:app_mem_norm${COLORS[1]}:"%APPMEM\t" \
+        LINE0.5:app_mem_norm_avg${COLORS[1]}:dashes \
+        GPRINT:app_mem_max:"max\: %.2lf\t" \
+        GPRINT:app_mem_avg:"(avg\: %.2lf)" \
+        COMMENT:"\n" \
+ 

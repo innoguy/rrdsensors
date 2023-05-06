@@ -15,6 +15,7 @@ create_config() {
     echo "# Where the graphs are stored" >> .config
     echo "OUT1=$PWD/graph_sys" >> .config
     echo "OUT2=$PWD/graph_net" >> .config
+	echo "OUT3=$PWD/graph_app" >> .config
     echo "# Graph dimensions" >> .config
     echo "HEIGHT=800" >> .config
     echo "MIN_WIDTH=1000" >> .config
@@ -223,6 +224,8 @@ rrdtool create ${DB}.rrd --start N --step 60 \
     DS:net_cel:COUNTER:60:U:U \
     DS:net_wif:COUNTER:60:U:U \
     DS:net_eth:COUNTER:60:U:U \
+    DS:app_cpu:GAUGE:60:U:U \
+    DS:app_mem:GAUGE:60:U:U \
     RRA:AVERAGE:0.5:1:10080 RRA:AVERAGE:0.5:60:2160 
 
 

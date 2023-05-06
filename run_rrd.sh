@@ -104,8 +104,12 @@ do
   if [ -z ${IF_CEL} ]; then NET_CEL=0; else NET_CEL="$(bc -l <<< $(cat /proc/net/dev | grep ${IF_CEL} | awk '{printf "%.0f", $2 + $10}'))"; fi
   if [ -z ${IF_WIF} ]; then NET_WIF=0; else NET_WIF="$(bc -l <<< $(cat /proc/net/dev | grep ${IF_WIF} | awk '{printf "%.0f", $2 + $10}'))"; fi
   if [ -z ${IF_ETH} ]; then NET_ETH=0; else NET_ETH="$(bc -l <<< $(cat /proc/net/dev | grep ${IF_ETH} | awk '{printf "%.0f", $2 + $10}'))"; fi
-  # echo $CPU_LOAD:$CPU_TEMP:$SSD_READ:$SSD_WRITE:$SSD_TEMP:$NET_CEL:$NET_WIF:$NET_ETH
-  rrdtool updatev ${DB}.rrd N:$CPU_LOAD:$CPU_TEMP:$SSD_READ:$SSD_WRITE:$SSD_TEMP:$NET_CEL:$NET_WIF:$NET_ETH
+  APP_CPU="$(bc -l <<< $(ps aux | grep firefox |  awk 'BEGIN { sum=0 }  { sum+=$3 } END { print sum }'))"
+  APP_MEM="$(bc -l <<< $(ps aux | grep firefox |  awk 'BEGIN { sum=0 }  { sum+=$4 } END { print sum }'))"
+  if [[ $APP_CPU == "" ]]; then APP_CPU=0; fi
+  if [[ $APP_MEM == "" ]]; then APP_CPU=0; fi
+  echo $CPU_LOAD:$CPU_TEMP:$SSD_READ:$SSD_WRITE:$SSD_TEMP:$NET_CEL:$NET_WIF:$NET_ETH:$APP_CPU:$APP_MEM
+  rrdtool updatev ${DB}.rrd N:$CPU_LOAD:$CPU_TEMP:$SSD_READ:$SSD_WRITE:$SSD_TEMP:$NET_CEL:$NET_WIF:$NET_ETH:$APP_CPU:$APP_MEM
   sleep 20
 done
  
