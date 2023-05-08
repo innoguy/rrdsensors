@@ -124,12 +124,30 @@ else
     echo "Finish graph at end of archive ${END}"
 fi
 
+NOW=`date +%s`
+if [[ ! START =~ [N] ]]
+then
+    START=$(bc -l <<< ${START/N/$NOW})
+fi
+if [[ ! END =~ [N] ]]
+then
+    END=$(bc -l <<< ${END/N/$NOW})
+fi
+
+
 LINE_WIDTH=1
 ALPHA=30 # used in area RGBA
 
+LOUT1="System"
+LOUT2="Network"
+LOUT3="Applications"
+echo $START
+LSTART=`date +%F\ %T -d @$START`
+LEND=`date +%F\ %T -d @$END`
+
 rrdtool graph \
     ${OUT1}.png \
-    --title "Controller statistics normalised to their maximum values" \
+    --title "$LOUT1 statistics for $HOSTNAME from $LSTART to $LEND" \
     --watermark "$(date)" \
     --vertical-label "% of maximum" \
     --slope-mode \
@@ -196,7 +214,7 @@ rrdtool graph \
 
 rrdtool graph \
     ${OUT2}.png \
-    --title "Controller statistics normalised to their maximum values" \
+    --title "$LOUT1 statistics for $HOSTNAME from $START to $END" \
     --watermark "$(date)" \
     --vertical-label "% of maximum" \
     --slope-mode \
@@ -242,7 +260,7 @@ rrdtool graph \
 
 rrdtool graph \
     ${OUT3}.png \
-    --title "Controller statistics normalised to their maximum values" \
+    --title "$LOUT3 statistics for $HOSTNAME from $START to $END" \
     --watermark "$(date)" \
     --vertical-label "% of maximum" \
     --slope-mode \
