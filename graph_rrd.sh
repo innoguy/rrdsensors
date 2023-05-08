@@ -228,35 +228,38 @@ rrdtool graph \
     --color BACK#111217 \
     --color FONT#CCCCDC \
     DEF:net_cel=${DB}.rrd:net_cel:AVERAGE \
-        VDEF:net_cel_max=net_cel,MAXIMUM \
-        VDEF:net_cel_avg=net_cel,AVERAGE \
-        CDEF:net_cel_norm=net_cel,net_cel_max,/,100,\* \
-        CDEF:net_cel_norm_avg=net_cel,POP,net_cel_avg,100,\*,net_cel_max,/ \
-        LINE1:net_cel_norm${COLORS[0]}:"%IFCEL\t" \
-        LINE0.5:net_cel_norm_avg${COLORS[0]}:dashes \
-        GPRINT:net_cel_max:"(max\: %.2lf KB/s\g" \
-        GPRINT:net_cel_avg:"(avg\: %.2lf KB/s)" \
-        COMMENT:"\n" \
     DEF:net_wif=${DB}.rrd:net_wif:AVERAGE \
-        VDEF:net_wif_max=net_wif,MAXIMUM \
-        VDEF:net_wif_avg=net_wif,AVERAGE \
-        CDEF:net_wif_norm=net_wif,net_wif_max,/,100,\* \
-        CDEF:net_wif_norm_avg=net_wif,POP,net_wif_avg,100,\*,net_wif_max,/ \
-        LINE1:net_wif_norm${COLORS[1]}:"%IFWIF\t" \
-        LINE0.5:net_wif_norm_avg${COLORS[1]}:dashes \
-        GPRINT:net_wif_max:"(max\: %.2lf KB/s\g" \
-        GPRINT:net_wif_avg:"(avg\: %.2lf KB/s)" \
-        COMMENT:"\n" \
     DEF:net_eth=${DB}.rrd:net_eth:AVERAGE \
-        VDEF:net_eth_max=net_eth,MAXIMUM \
-        VDEF:net_eth_avg=net_eth,AVERAGE \
-        CDEF:net_eth_norm=net_eth,net_eth_max,/,100,\* \
-        CDEF:net_eth_norm_avg=net_eth,POP,net_eth_avg,100,\*,net_eth_max,/ \
-        LINE1:net_eth_norm${COLORS[2]}:"%IFETH\t" \
-        LINE0.5:net_eth_norm_avg${COLORS[2]}:dashes \
-        GPRINT:net_eth_max:"(max\: %.2lf KB/s\g" \
-        GPRINT:net_eth_avg:"(avg\: %.2lf KB/s)" \
-        COMMENT:"\n" 
+    CDEF:net_all=net_cel,net_wif,net_eth,+,+ \
+    VDEF:net_cel_max=net_cel,MAXIMUM \
+    VDEF:net_wif_max=net_wif,MAXIMUM \
+    VDEF:net_eth_max=net_eth,MAXIMUM \
+    VDEF:net_all_max=net_all,MAXIMUM \
+    VDEF:net_cel_avg=net_cel,AVERAGE \
+    CDEF:net_cel_norm=net_cel,net_all_max,/,100,\* \
+    CDEF:net_cel_norm_avg=net_cel,POP,net_cel_avg,100,\*,net_all_max,/ \
+    LINE1:net_cel_norm${COLORS[0]}:"%IFCEL\t" \
+    LINE0.5:net_cel_norm_avg${COLORS[0]}:dashes \
+    GPRINT:net_cel_max:"(max\: %.2lf KB/s\g" \
+    GPRINT:net_cel_avg:"(avg\: %.2lf KB/s)" \
+    COMMENT:"\n" \
+    VDEF:net_wif_avg=net_wif,AVERAGE \
+    CDEF:net_wif_norm=net_wif,net_all_max,/,100,\* \
+    CDEF:net_wif_norm_avg=net_wif,POP,net_wif_avg,100,\*,net_all_max,/ \
+    LINE1:net_wif_norm${COLORS[1]}:"%IFWIF\t" \
+    LINE0.5:net_wif_norm_avg${COLORS[1]}:dashes \
+    GPRINT:net_wif_max:"(max\: %.2lf KB/s\g" \
+    GPRINT:net_wif_avg:"(avg\: %.2lf KB/s)" \
+    COMMENT:"\n" \
+    VDEF:net_eth_avg=net_eth,AVERAGE \
+    CDEF:net_eth_norm=net_eth,net_all_max,/,100,\* \
+    CDEF:net_eth_norm_avg=net_eth,POP,net_eth_avg,100,\*,net_all_max,/ \
+    LINE1:net_eth_norm${COLORS[2]}:"%IFETH\t" \
+    LINE0.5:net_eth_norm_avg${COLORS[2]}:dashes \
+    GPRINT:net_eth_max:"(max\: %.2lf KB/s\g" \
+    GPRINT:net_eth_avg:"(avg\: %.2lf KB/s)" \
+    COMMENT:"\n" \
+
 
 rrdtool graph \
     ${OUT3}.png \
