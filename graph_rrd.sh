@@ -214,7 +214,7 @@ rrdtool graph \
 
 rrdtool graph \
     ${OUT2}.png \
-    --title "$LOUT1 statistics for $HOSTNAME from $START to $END" \
+    --title "$LOUT1 statistics for $HOSTNAME from $LSTART to $LEND" \
     --watermark "$(date)" \
     --vertical-label "% of maximum" \
     --slope-mode \
@@ -263,7 +263,7 @@ rrdtool graph \
 
 rrdtool graph \
     ${OUT3}.png \
-    --title "$LOUT3 statistics for $HOSTNAME from $START to $END" \
+    --title "$LOUT3 statistics for $HOSTNAME from $LSTART to $LEND" \
     --watermark "$(date)" \
     --vertical-label "% of maximum" \
     --slope-mode \
