@@ -25,7 +25,7 @@ create_config() {
 	echo "APP3_PRC=anydesk" >> .config
 	echo "APP3_TXT=Anydesk" >> .config
 	echo "APP4_PRC=teamviewer" >> .config
-    echo "APP4_TXT=Teamv" >> .config
+    echo "APP4_TXT=Teamvwr" >> .config
     echo "# System information" >> .config
     if [ $(lscpu | grep -c "6305E") -ge 1 ] 
     then 
@@ -56,7 +56,7 @@ create_config() {
 	done
 
     IF_WIF=""
-	for i in "wlp6s0" "wlan0" 
+	for i in "wlp6s0" "wlan0" "wlp2s0"
 	do
 		if $(echo $(ip link) | grep -q $i) 
 		then 
@@ -87,10 +87,13 @@ create_config() {
 
     TZ_CPU=""
     for i in 2 0
-	if [ -f "/sys/class/thermal/thermal_zone"$i"/temp" ]
-	then
-		TZ_CPU=$i
-	fi
+	do
+	    if [ -f "/sys/class/thermal/thermal_zone"$i"/temp" ]
+	    then
+		    TZ_CPU=$i
+			break
+	    fi
+    done
 
 	echo "IF_ETH="$IF_ETH >> .config
 	echo "IF_WIF="$IF_WIF >> .config
@@ -104,7 +107,7 @@ then
     while true; do
         read -p "Do you want to generate a new .config file? " yn
         case $yn in
-            [Yy]* ) create_config;;
+            [Yy]* ) create_config && break;;
             [Nn]* ) break;;
             * ) echo "Please answer yes or no.";;
         esac
