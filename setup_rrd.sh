@@ -36,6 +36,9 @@ create_config() {
     elif [ $(lscpu | grep -c "4250U") -ge 1 ]
     then
         echo "CONTROLLER=NUC" >> .config
+	elif [ $(lscpu | grep -c "Cortex-A53") -ge 1 ]
+    then
+        echo "CONTROLLER=A1" >> .config
     else 
         echo "Unrecognized controller type"
         echo "CONTROLLER=Unknown" >> .config
@@ -43,11 +46,12 @@ create_config() {
     fi
 
     IF_ETH=""
-	for i in "eth0" "eth2" "eno1"
+	for i in "eth2" "eth0" "eno1"
 	do
 		if $(echo $(ip link) | grep -q $i) 
 		then 
 			IF_ETH=$i
+			break
 		fi
 	done
 
@@ -57,6 +61,7 @@ create_config() {
 		if $(echo $(ip link) | grep -q $i) 
 		then 
 			IF_WIF=$i
+			break
 		fi
 	done
 
@@ -66,15 +71,17 @@ create_config() {
 		if $(echo $(ip link) | grep -q $i) 
 		then 
 			IF_CEL=$i
+			break
 		fi
 	done
 
     DISK="Unknown"
-    for i in "sdb" "nvme0n1" "mmcblk1" "sda"
+    for i in "sdb" "nvme0n1" "mmcblk1" "sda" "mmcblk2"
 	do
 	    if [ -b "/dev/"$i ]
 		then
 		    DISK=$i
+			break
 		fi
 	done
 

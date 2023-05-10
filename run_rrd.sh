@@ -75,27 +75,27 @@ while [ true ]
 do
   if [[ $CONTROLLER == 'NUC' ]]
   then
-	SSD_TEMP="$(bc -l <<< $(smartctl -d sntrealtek /dev/sdb -a | grep 'Temperature:' | awk '{print $2}'))"
+	  SSD_TEMP="$(bc -l <<< $(smartctl -d sntrealtek /dev/sdb -a | grep 'Temperature:' | awk '{print $2}'))"
   elif [[ $CONTROLLER == 'T1' ]]
   then
     if [[ $DISK == 'nvme0n1' ]]
-	then
-	  SSD_TEMP="$(bc -l <<< $(sensors | grep 'Composite' | awk '{print $2+0}'))"
-	elif [[ $DISK == 'sda' ]]
-	then 
-	  SSD_TEMP="$(bc -l <<< $(smartctl -d ata /dev/sda -a | grep 'Temperature' | awk '{print $10}'))"
-	else
-	  SSD_TEMP=0
-	fi
+	  then
+	    SSD_TEMP="$(bc -l <<< $(sensors | grep 'Composite' | awk '{print $2+0}'))"
+	  elif [[ $DISK == 'sda' ]]
+	  then 
+	    SSD_TEMP="$(bc -l <<< $(smartctl -d ata /dev/sda -a | grep 'Temperature' | awk '{print $10}'))"
+	  else
+	    SSD_TEMP=0
+	  fi
   elif [[ $CONTROLLER == 'RPI' ]]
   then
-	SSD_TEMP="$(bc -l <<< $(sensors | grep 'temp1:' | awk '{print $2+0}'))"
+	  SSD_TEMP="$(bc -l <<< $(sensors | grep 'temp1:' | awk '{print $2+0}'))"
   elif [[ $CONTROLLER == 'M1PRO' ]]
   then
-	SSD_TEMP="$(bc -l <<< $(sensors | grep 'temp1:' | awk '{print $2+0}'))"
+	  SSD_TEMP="$(bc -l <<< $(sensors | grep 'temp1:' | awk '{print $2+0}'))"
   elif [[ $CONTROLLER == 'A1' ]]
   then
-	SSD_TEMP="0"
+	  SSD_TEMP="0"
   fi
   CPU_TEMP="$(bc -l <<< $(cat /sys/class/thermal/thermal_zone"$TZ_CPU"/temp | awk '{print $0 / 1000}'))"
   CPU_LOAD="$(bc -l <<< $(top -b -n1 | grep 'Cpu(s)' | awk '{print $2 + $4}'))"
