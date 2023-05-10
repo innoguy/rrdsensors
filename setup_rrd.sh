@@ -1,7 +1,5 @@
 #!/bin/bash
 
-set -u
-
 if [ "$EUID" -ne 0 ]
 then
     echo "Please run with sudo"
@@ -27,7 +25,7 @@ create_config() {
 	echo "APP3_PRC=anydesk" >> .config
 	echo "APP3_TXT=Anydesk" >> .config
 	echo "APP4_PRC=teamviewer" >> .config
-    echo "APP4_TXT=Teamviewer" >> .config
+    echo "APP4_TXT=Teamv" >> .config
     echo "# System information" >> .config
     if [ $(lscpu | grep -c "6305E") -ge 1 ] 
     then 
@@ -44,43 +42,53 @@ create_config() {
         exit
     fi
 
-	IF_ETH=$(ip link | awk '{print $2}' | grep -e ^[eth,eno] | awk 'NR==1 {print $1}' | sed 's/ //g' | sed 's/://g')
+    IF_ETH=""
+	for i in "eth0" "eth2" "eno1"
+	do
+		if $(echo $(ip link) | grep -q $i) 
+		then 
+			IF_ETH=$i
+		fi
+	done
+
+    IF_WIF=""
+	for i in "wlp6s0" "wlan0" 
+	do
+		if $(echo $(ip link) | grep -q $i) 
+		then 
+			IF_WIF=$i
+		fi
+	done
+
+    IF_CEL=""
+	for i in "wwan0" "mlan0" "ppp0"
+	do
+		if $(echo $(ip link) | grep -q $i) 
+		then 
+			IF_CEL=$i
+		fi
+	done
+
+    DISK="Unknown"
+    for i in "sdb" "nvme0n1" "mmcblk1" "sda"
+	do
+	    if [ -b "/dev/"$i ]
+		then
+		    DISK=$i
+		fi
+	done
+
+    TZ_CPU=""
+    for i in 2 0
+	if [ -f "/sys/class/thermal/thermal_zone"$i"/temp" ]
+	then
+		TZ_CPU=$i
+	fi
+
 	echo "IF_ETH="$IF_ETH >> .config
-
-	IF_WIF=$(ip link | awk '{print $2}' | grep -e ^wl | sed 's/ //g' | sed 's/://g')
 	echo "IF_WIF="$IF_WIF >> .config
-
-	IF_CEL=$(ip link | awk '{print $2}' | grep -e ^m | sed 's/ //g' | sed 's/://')
 	echo "IF_CEL="$IF_CEL >> .config
-
-	if [ -b "/dev/sdb" ]
-	then
-		DISK="sdb"
-	elif [ -b "/dev/nvme0n1" ]
-	then
-		DISK="nvme0n1"
-	elif [ -b "/dev/mmcblk1" ]
-	then 
-		DISK="mmcblk1"
-    elif [ -b "/dev/sda" ]
-	then
-		DISK="sda"
-	else
-		DISK="Unknown"
-		echo "Unable to identify disk used. Please correct in .config file"
-	fi
 	echo "DISK="$DISK >> .config
-
-
-	if [ -f /sys/class/thermal/thermal_zone2/temp ]
-	then
-		TZ_CPU=2
-	elif [ -f /sys/class/thermal/thermal_zone0/temp ]
-	then	
-	    TZ_CPU=0
-	else
-		echo "Unable to identify CPU temperature sensor. Please correct in .config file"
-	fi
 	echo "TZ_CPU="$TZ_CPU >> .config
 }
 
