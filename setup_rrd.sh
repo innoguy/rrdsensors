@@ -128,7 +128,13 @@ done
 
 source .config
 
-for i in rrdtool
+TOOLS="rrdtool"
+if [[ $CONTROLLER == 'T1' ]]
+then 
+	TOOLS = $TOOLS" smartmontools"
+fi
+
+for i in $TOOLS
 do
     dpkg -s $i &> /dev/null
     if [ $? -ne 0 ]
@@ -137,19 +143,6 @@ do
 	  exit 
 	fi
 done
-
-if [[ $CONTROLLER == 'NUC' ]]
-then
-    for i in smartmontools 
-    do
-        dpkg -s $i &> /dev/null
-        if [ $? -ne 0 ]
-	    then 
-	        echo "Please install $i using sudo apt install $i"
-	        exit 
-	    fi
-    done
-fi
 
 if [ ! -f "$PWD/rrd.service" ]
 then
