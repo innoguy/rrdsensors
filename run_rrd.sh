@@ -101,9 +101,9 @@ do
   CPU_LOAD="$(bc -l <<< $(top -b -n1 | grep 'Cpu(s)' | awk '{print $2 + $4}'))"
   SSD_READ="$(bc -l <<< $(cat /proc/diskstats | grep "${DISK} " | awk '{print $6}'))"
   SSD_WRITE="$(bc -l <<< $(cat /proc/diskstats | grep "${DISK} " | awk '{print $10}'))"
-  if [ -z ${IF_CEL} ]; then NET_CEL=0; else NET_CEL="$(bc -l <<< $(cat /proc/net/dev | grep ${IF_CEL} | awk '{printf "%.0f", $2 + $10}'))"; fi
-  if [ -z ${IF_WIF} ]; then NET_WIF=0; else NET_WIF="$(bc -l <<< $(cat /proc/net/dev | grep ${IF_WIF} | awk '{printf "%.0f", $2 + $10}'))"; fi
-  if [ -z ${IF_ETH} ]; then NET_ETH=0; else NET_ETH="$(bc -l <<< $(cat /proc/net/dev | grep ${IF_ETH} | awk '{printf "%.0f", $2 + $10}'))"; fi
+  if [ -z ${IF_CEL} ]; then NET_CEL=0; else NET_CEL="$(echo $(cat /proc/net/dev | grep ${IF_CEL} | awk '{printf "%.0f", $2 + $10}') "/1000" | bc)"; fi
+  if [ -z ${IF_WIF} ]; then NET_WIF=0; else NET_WIF="$(echo $(cat /proc/net/dev | grep ${IF_WIF} | awk '{printf "%.0f", $2 + $10}') "/1000" | bc)"; fi
+  if [ -z ${IF_ETH} ]; then NET_ETH=0; else NET_ETH="$(echo $(cat /proc/net/dev | grep ${IF_ETH} | awk '{printf "%.0f", $2 + $10}') "/1000" | bc)"; fi
   APP1_CPU="$(bc -l <<< $(ps aux | grep $APP1_PRC |  awk 'BEGIN { sum=0 }  { sum+=$3 } END { print sum }'))"
   APP1_MEM="$(bc -l <<< $(ps aux | grep $APP1_PRC |  awk 'BEGIN { sum=0 }  { sum+=$4 } END { print sum }'))"
   APP2_CPU="$(bc -l <<< $(ps aux | grep $APP2_PRC |  awk 'BEGIN { sum=0 }  { sum+=$3 } END { print sum }'))"

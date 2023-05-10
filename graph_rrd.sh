@@ -1,6 +1,5 @@
 #!/bin/bash
 
-set -u
 source .config
 
 ####################
