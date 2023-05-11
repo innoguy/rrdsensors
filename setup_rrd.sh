@@ -39,6 +39,9 @@ create_config() {
 	elif [ $(lscpu | grep -c "Cortex-A53") -ge 1 ]
     then
         echo "CONTROLLER=A1" >> .config
+	elif [ $(lscpu | grep -c "N3160") -ge 1 ]
+    then
+        echo "CONTROLLER=M1" >> .config
     else 
         echo "Unrecognized controller type"
         echo "CONTROLLER=Unknown" >> .config
