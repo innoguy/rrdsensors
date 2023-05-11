@@ -96,6 +96,9 @@ do
   elif [[ $CONTROLLER == 'A1' ]]
   then
 	  SSD_TEMP="0"
+  elif [[ $CONTROLLER == 'M1' ]]
+  then
+	  SSD_TEMP="0"
   fi
   CPU_TEMP="$(bc -l <<< $(cat /sys/class/thermal/thermal_zone"$TZ_CPU"/temp | awk '{print $0 / 1000}'))"
   CPU_LOAD="$(bc -l <<< $(top -b -n1 | grep 'Cpu(s)' | awk '{print $2 + $4}'))"
