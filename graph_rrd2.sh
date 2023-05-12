@@ -162,7 +162,7 @@ rrdtool graph \
         VDEF:panel_tmp_avg=panel_tmp,AVERAGE \
         CDEF:panel_tmp_norm=panel_tmp,panel_tmp_max,/,100,\* \
         CDEF:panel_tmp_norm_avg=panel_tmp,POP,panel_tmp_avg,100,\*,panel_tmp_max,/ \
-        LINE1:panel_tmp_norm${COLORS[0]}:"%CPU\t" \
+        LINE1:panel_tmp_norm${COLORS[0]}:"%Panel_temp\t" \
         LINE0.5:panel_tmp_norm_avg${COLORS[0]}:dashes \
         AREA:panel_tmp_norm${COLORS[0]}${ALPHA} \
         GPRINT:panel_tmp_max:"(max\: %.2lf \g" \
@@ -173,7 +173,7 @@ rrdtool graph \
         VDEF:panel_fps_avg=panel_fps,AVERAGE \
         CDEF:panel_fps_norm=panel_fps,panel_fps_max,/,100,\* \
         CDEF:panel_fps_norm_avg=panel_fps,POP,panel_fps_avg,100,\*,panel_fps_max,/ \
-        LINE1:panel_fps_norm${COLORS[1]}:"%CPUT\t" \
+        LINE1:panel_fps_norm${COLORS[1]}:"%Panel_fps\t" \
         LINE0.5:panel_fps_norm_avg${COLORS[1]}:dashes \
         GPRINT:panel_fps_max:"(max\: %.2lf\g" \
         GPRINT:panel_fps_avg:"(avg\: %.2lf)" \

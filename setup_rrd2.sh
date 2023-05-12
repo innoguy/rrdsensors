@@ -62,7 +62,7 @@ then
 	echo "After=network.target" >> rrd2.service
 	echo "" >> rrd2.service
 	echo "[Service]" >> rrd2.service
-	echo "ExecStart=$PWD/run_rrd.sh " >> rrd2.service
+	echo "ExecStart=$PWD/run_rrd2.sh " >> rrd2.service
 	echo "Restart=on-failure" >> rrd2.service
 	echo "RestartSec=5s" >> rrd2.service
 	echo "[Install]" >> rrd2.service
