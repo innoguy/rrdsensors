@@ -75,7 +75,7 @@ while [ true ]
 do
   if [[ $CONTROLLER == 'NUC' ]]
   then
-	  SSD_TEMP="$(bc -l <<< $(smartctl -d sntrealtek /dev/sdb -a | grep 'Temperature:' | awk '{print $2}'))"
+	  SSD_TEMP="$(bc -l <<< $(sudo smartctl -d sntrealtek /dev/$DISK -a | grep 'Temperature:' | awk '{print $2}'))"
   elif [[ $CONTROLLER == 'T1' ]]
   then
     if [[ $DISK == 'nvme0n1' ]]

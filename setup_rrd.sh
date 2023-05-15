@@ -156,7 +156,7 @@ then
 	echo "" >> rrd.service
 	echo "[Service]" >> rrd.service
 	echo "ExecStart=$PWD/run_rrd.sh " >> rrd.service
-	echo "Restart=on-failure" >> rrd.service
+	echo "Restart=always" >> rrd.service
 	echo "RestartSec=5s" >> rrd.service
 	echo "[Install]" >> rrd.service
     echo "WantedBy=multi-user.target" >> rrd.service
