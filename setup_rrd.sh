@@ -49,7 +49,7 @@ create_config() {
     fi
 
     IF_ETH=""
-	for i in "eth2" "eth0" "eno1"
+	for i in "eth2" "eth0"
 	do
 		if $(echo $(ip link) | grep -q $i) 
 		then 
@@ -134,7 +134,7 @@ source .config
 TOOLS="rrdtool"
 if [[ $CONTROLLER == 'T1' ]]
 then 
-	TOOLS = $TOOLS" smartmontools"
+	TOOLS= $TOOLS" smartmontools"
 fi
 
 for i in $TOOLS

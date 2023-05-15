@@ -67,11 +67,12 @@ done
 
 while [ true ] 
 do
-  PKT30=$(sudo tshark -f "ether proto 0x07d0 and ether[14]==0x30" -Tfields -e data.data -a packets:1)
+  PKT30=$(sudo tshark -f "ether proto 0x07d0 and ether[14]==0x30" -Tfields -e data.data -a packets:1 2>/dev/null)
   PTMPL=${PKT30:80:4}
   PTMP=$(echo $(echo "obase=10; ibase=16; ${PTMPL^^}" | bc) "/10" | bc -l )
   PFPSL=${PKT30:252:4}
   PFPS=$(echo "obase=10; ibase=16; ${PFPSL^^}" | bc)
+  echo $PTMP:$PFPS
   rrdtool updatev ${DB}.rrd N:$PTMP:$PFPS
   sleep 20
 done
