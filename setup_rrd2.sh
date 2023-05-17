@@ -157,5 +157,6 @@ then
 fi
 
 sudo systemctl daemon-reload
+sudo systemctl enable rrd2
 sudo systemctl start rrd2
 sudo systemctl status rrd2
