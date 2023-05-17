@@ -266,5 +266,6 @@ then
 fi
 
 sudo systemctl daemon-reload
+sudo systemctl enable rrd
 sudo systemctl start rrd
 sudo systemctl status rrd
