@@ -119,14 +119,14 @@ do
   #APP4_CPU="$(bc -l <<< $(ps aux | grep $APP4_PRC |  awk 'BEGIN { sum=0 }  { sum+=$3 } END { print sum }'))"
   #APP4_MEM="$(bc -l <<< $(ps aux | grep $APP4_PRC |  awk 'BEGIN { sum=0 }  { sum+=$4 } END { print sum }'))"
 
-  APP1_CPU="$(top -b -n 2 | grep $APP1_PRC | awk 'NR==1 {print $9}')"
-  APP1_MEM="$(top -b -n 2 | grep $APP1_PRC | awk 'NR==1 {print $10}')"
-  APP2_CPU="$(top -b -n 2 | grep $APP2_PRC | awk 'NR==1 {print $9}')"
-  APP2_MEM="$(top -b -n 2 | grep $APP2_PRC | awk 'NR==1 {print $10}')"
-  APP3_CPU="$(top -b -n 2 | grep $APP3_PRC | awk 'NR==1 {print $9}')"
-  APP3_MEM="$(top -b -n 2 | grep $APP3_PRC | awk 'NR==1 {print $10}')"
-  APP4_CPU="$(top -b -n 2 | grep $APP4_PRC | awk 'NR==1 {print $9}')"
-  APP4_MEM="$(top -b -n 2 | grep $APP4_PRC | awk 'NR==1 {print $10}')"
+  APP1_CPU="$(bc -l <<< $(top -b -n 2 | grep $APP1_PRC | awk 'BEGIN { sum=0 }  { sum+=$9  } END { print sum }'))"
+  APP1_MEM="$(bc -l <<< $(top -b -n 2 | grep $APP1_PRC | awk 'BEGIN { sum=0 }  { sum+=$10 } END { print sum }'))"
+  APP2_CPU="$(bc -l <<< $(top -b -n 2 | grep $APP2_PRC | awk 'BEGIN { sum=0 }  { sum+=$9  } END { print sum }'))"
+  APP2_MEM="$(bc -l <<< $(top -b -n 2 | grep $APP2_PRC | awk 'BEGIN { sum=0 }  { sum+=$10 } END { print sum }'))"
+  APP3_CPU="$(bc -l <<< $(top -b -n 2 | grep $APP3_PRC | awk 'BEGIN { sum=0 }  { sum+=$9  } END { print sum }'))"
+  APP3_MEM="$(bc -l <<< $(top -b -n 2 | grep $APP3_PRC | awk 'BEGIN { sum=0 }  { sum+=$10 } END { print sum }'))"
+  APP4_CPU="$(bc -l <<< $(top -b -n 2 | grep $APP4_PRC | awk 'BEGIN { sum=0 }  { sum+=$9  } END { print sum }'))"
+  APP4_MEM="$(bc -l <<< $(top -b -n 2 | grep $APP4_PRC | awk 'BEGIN { sum=0 }  { sum+=$10 } END { print sum }'))"
   
   if [[ $APP1_CPU == "" ]]; then APP1_CPU=0; fi
   if [[ $APP1_MEM == "" ]]; then APP1_MEM=0; fi
