@@ -134,7 +134,7 @@ source .config
 TOOLS="rrdtool"
 if [[ $CONTROLLER == 'T1' ]]
 then 
-	TOOLS= $TOOLS" smartmontools"
+	TOOLS=$TOOLS" smartmontools"
 fi
 
 for i in $TOOLS
