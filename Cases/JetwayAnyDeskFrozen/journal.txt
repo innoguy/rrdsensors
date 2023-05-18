@@ -1,0 +1,12 @@
+May 09 03:26:32 T1-100019 anydesk[62079]: anydesk: Fatal IO error 11 (Resource temporarily unavailable) on X server :0.
+May 09 03:26:32 T1-100019 anydesk[62079]: anydesk: Fatal IO error 11 (Resource temporarily unavailable) on X server :0.
+May 09 03:24:55 T1-100019 anydesk[37689]: anydesk: Fatal IO error 11 (Resource temporarily unavailable) on X server :0.
+May 09 03:24:55 T1-100019 anydesk[37685]: anydesk: Fatal IO error 11 (Resource temporarily unavailable) on X server :0.
+May 09 03:24:55 T1-100019 anydesk[37689]: anydesk: Fatal IO error 11 (Resource temporarily unavailable) on X server :0.
+May 02 05:26:24 T1-100019 anydesk_global_tray.desktop[1644]: anydesk: Fatal IO error 11 (Resource temporarily unavailable) on X server :0.
+May 02 05:26:24 T1-100019 anydesk_global_tray.desktop[1644]: anydesk: Fatal IO error 11 (Resource temporarily unavailable) on X server :0.
+May 02 04:29:28 T1-100019 anydesk[3857]: anydesk: Fatal IO error 11 (Resource temporarily unavailable) on X server :0.
+May 02 04:29:28 T1-100019 anydesk[3857]: anydesk: Fatal IO error 11 (Resource temporarily unavailable) on X server :0.
+May 02 04:29:28 T1-100019 anydesk_global_tray.desktop[1563]: anydesk: Fatal IO error 11 (Resource temporarily unavailable) on X server :0.
+May 02 04:29:28 T1-100019 anydesk_global_tray.desktop[1563]: anydesk: Fatal IO error 11 (Resource temporarily unavailable) on X server :0.
+
