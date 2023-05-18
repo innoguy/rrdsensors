@@ -112,8 +112,8 @@ do
 
   #APP1_CPU="$(bc -l <<< $(ps aux | grep $APP1_PRC |  awk 'BEGIN { sum=0 }  { sum+=$3 } END { print sum }'))"
   #APP1_MEM="$(bc -l <<< $(ps aux | grep $APP1_PRC |  awk 'BEGIN { sum=0 }  { sum+=$4 } END { print sum }'))"
-  #APP2_CPU="$(bc -l <<< $(ps aux | grep $APP2_PRC |  awk 'BEGIN { sum=0 }  { sum+=$3 } END { print sum }'))"
-  #APP2_MEM="$(bc -l <<< $(ps aux | grep $APP2_PRC |  awk 'BEGIN { sum=0 }  { sum+=$4 } END { print sum }'))"
+  APP2_CPU="$(bc -l <<< $(ps aux | grep $APP2_PRC |  awk 'BEGIN { sum=0 }  { sum+=$3 } END { print sum }'))"
+  APP2_MEM="$(bc -l <<< $(ps aux | grep $APP2_PRC |  awk 'BEGIN { sum=0 }  { sum+=$4 } END { print sum }'))"
   #APP3_CPU="$(bc -l <<< $(ps aux | grep $APP3_PRC |  awk 'BEGIN { sum=0 }  { sum+=$3 } END { print sum }'))"
   #APP3_MEM="$(bc -l <<< $(ps aux | grep $APP3_PRC |  awk 'BEGIN { sum=0 }  { sum+=$4 } END { print sum }'))"
   #APP4_CPU="$(bc -l <<< $(ps aux | grep $APP4_PRC |  awk 'BEGIN { sum=0 }  { sum+=$3 } END { print sum }'))"
@@ -121,8 +121,8 @@ do
 
   APP1_CPU="$(bc -l <<< $(top -b -n 2 | grep $APP1_PRC | awk 'BEGIN { sum=0 }  { sum+=$9  } END { print sum }'))"
   APP1_MEM="$(bc -l <<< $(top -b -n 2 | grep $APP1_PRC | awk 'BEGIN { sum=0 }  { sum+=$10 } END { print sum }'))"
-  APP2_CPU="$(bc -l <<< $(top -b -n 2 | grep $APP2_PRC | awk 'BEGIN { sum=0 }  { sum+=$9  } END { print sum }'))"
-  APP2_MEM="$(bc -l <<< $(top -b -n 2 | grep $APP2_PRC | awk 'BEGIN { sum=0 }  { sum+=$10 } END { print sum }'))"
+  #APP2_CPU="$(bc -l <<< $(top -b -n 2 | grep $APP2_PRC | awk 'BEGIN { sum=0 }  { sum+=$9  } END { print sum }'))"
+  #APP2_MEM="$(bc -l <<< $(top -b -n 2 | grep $APP2_PRC | awk 'BEGIN { sum=0 }  { sum+=$10 } END { print sum }'))"
   APP3_CPU="$(bc -l <<< $(top -b -n 2 | grep $APP3_PRC | awk 'BEGIN { sum=0 }  { sum+=$9  } END { print sum }'))"
   APP3_MEM="$(bc -l <<< $(top -b -n 2 | grep $APP3_PRC | awk 'BEGIN { sum=0 }  { sum+=$10 } END { print sum }'))"
   APP4_CPU="$(bc -l <<< $(top -b -n 2 | grep $APP4_PRC | awk 'BEGIN { sum=0 }  { sum+=$9  } END { print sum }'))"
