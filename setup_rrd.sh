@@ -20,7 +20,7 @@ create_config() {
 	echo "# Applications to monitor" >> .config
 	echo "APP1_PRC=AppRun" >> .config
 	echo "APP1_TXT=Nucleus" >> .config
-	echo "APP2_PRC=screenhub-player" >> .config
+	echo "APP2_PRC=screenhub-play" >> .config
 	echo "APP2_TXT=Player" >> .config
 	echo "APP3_PRC=anydesk" >> .config
 	echo "APP3_TXT=Anydesk" >> .config
@@ -134,7 +134,7 @@ source .config
 TOOLS="rrdtool"
 if [[ $CONTROLLER == 'T1' ]]
 then 
-	TOOLS= $TOOLS" smartmontools"
+	TOOLS=$TOOLS" smartmontools"
 fi
 
 for i in $TOOLS
