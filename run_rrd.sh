@@ -86,6 +86,7 @@ do
 	  then 
 	    SSD_TEMP="$(bc -l <<< $(smartctl -d ata /dev/sda -a | grep 'Temperature' | awk '{print $10}'))"
       if [ $SSD_TEMP > 128 ]; then SSD_TEMP=$((128-SSD_TEMP)); fi
+      if [ $SSD_TEMP -eq: "" ]; then SSD_TEMP=0; fi;
 	  else
 	    SSD_TEMP=0
 	  fi
@@ -128,14 +129,23 @@ do
   APP4_CPU="$(bc -l <<< $(top -b -n 2 | grep $APP4_PRC | awk 'BEGIN { sum=0 }  { sum+=$9  } END { print sum }'))"
   APP4_MEM="$(bc -l <<< $(top -b -n 2 | grep $APP4_PRC | awk 'BEGIN { sum=0 }  { sum+=$10 } END { print sum }'))"
   
-  if [[ $APP1_CPU == "" ]]; then APP1_CPU=0; fi
-  if [[ $APP1_MEM == "" ]]; then APP1_MEM=0; fi
-  if [[ $APP2_CPU == "" ]]; then APP2_CPU=0; fi
-  if [[ $APP2_MEM == "" ]]; then APP2_MEM=0; fi
-  if [[ $APP3_CPU == "" ]]; then APP3_CPU=0; fi
-  if [[ $APP3_MEM == "" ]]; then APP3_MEM=0; fi
-  if [[ $APP4_CPU == "" ]]; then APP4_CPU=0; fi
-  if [[ $APP4_MEM == "" ]]; then APP4_MEM=0; fi
+  aNumber='^[.0-9]+$'
+  if ! [[ $CPU_LOAD =~ $aNumber ]] ; then CPU_LOAD=0; fi
+  if ! [[ $CPU_TEMP =~ $aNumber ]] ; then CPU_TEMP=0; fi
+  if ! [[ $SSD_TEMP =~ $aNumber ]] ; then SSD_TEMP=0; fi
+  if ! [[ $SSD_READ =~ $aNumber ]] ; then SSD_READ=0; fi
+  if ! [[ $SSD_WRITE =~ $aNumber ]] ; then SSD_WRITE=0; fi
+  if ! [[ $NET_CEL =~ $aNumber ]] ; then NET_CEL=0; fi
+  if ! [[ $NET_ETH =~ $aNumber ]] ; then NET_ETH=0; fi
+  if ! [[ $NET_WIF =~ $aNumber ]] ; then NET_WIF=0; fi
+  if ! [[ $APP1_CPU =~ $aNumber ]] ; then APP1_CPU=0; fi
+  if ! [[ $APP1_MEM =~ $aNumber ]] ; then APP1_MEM=0; fi
+  if ! [[ $APP2_CPU =~ $aNumber ]] ; then APP2_CPU=0; fi
+  if ! [[ $APP2_MEM =~ $aNumber ]] ; then APP2_MEM=0; fi
+  if ! [[ $APP3_CPU =~ $aNumber ]] ; then APP3_CPU=0; fi
+  if ! [[ $APP3_MEM =~ $aNumber ]] ; then APP3_MEM=0; fi
+  if ! [[ $APP4_CPU =~ $aNumber ]] ; then APP4_CPU=0; fi
+  if ! [[ $APP4_MEM =~ $aNumber ]] ; then APP4_MEM=0; fi
 
   echo $CPU_LOAD:$CPU_TEMP:$SSD_READ:$SSD_WRITE:$SSD_TEMP:$NET_CEL:$NET_WIF:$NET_ETH:$APP1_CPU:$APP1_MEM:$APP2_CPU:$APP2_MEM:$APP3_CPU:$APP3_MEM:$APP4_CPU:$APP4_MEM
   rrdtool updatev ${DB}.rrd N:$CPU_LOAD:$CPU_TEMP:$SSD_READ:$SSD_WRITE:$SSD_TEMP:$NET_CEL:$NET_WIF:$NET_ETH:$APP1_CPU:$APP1_MEM:$APP2_CPU:$APP2_MEM:$APP3_CPU:$APP3_MEM:$APP4_CPU:$APP4_MEM
