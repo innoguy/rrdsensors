@@ -84,7 +84,7 @@ do
 	  elif [[ $DISK == 'sda' ]]
 	  then 
 	    SSD_TEMP="$(bc -l <<< $(smartctl -d ata /dev/sda -a | grep 'Temperature' | awk '{print $10}'))"
-      if [ $SSD_TEMP > 128 ]; then SSD_TEMP=$((128-SSD_TEMP)); fi
+      if [ $SSD_TEMP -gt 128 ]; then SSD_TEMP=$((128-SSD_TEMP)); fi
 	  else
 	    SSD_TEMP=0
 	  fi
