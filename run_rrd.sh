@@ -76,7 +76,6 @@ do
   if [[ $CONTROLLER == 'NUC' ]]
   then
 	  SSD_TEMP="$(bc -l <<< $(sudo smartctl -d sntrealtek /dev/$DISK -a | grep 'Temperature:' | awk '{print $2}'))"
-    if [ $SSD_TEMP > 128 ]; then SSD_TEMP=$((128-SSD_TEMP)); fi
   elif [[ $CONTROLLER == 'T1' ]]
   then
     if [[ $DISK == 'nvme0n1' ]]
@@ -86,7 +85,6 @@ do
 	  then 
 	    SSD_TEMP="$(bc -l <<< $(smartctl -d ata /dev/sda -a | grep 'Temperature' | awk '{print $10}'))"
       if [ $SSD_TEMP > 128 ]; then SSD_TEMP=$((128-SSD_TEMP)); fi
-      if [ $SSD_TEMP -eq: "" ]; then SSD_TEMP=0; fi;
 	  else
 	    SSD_TEMP=0
 	  fi
