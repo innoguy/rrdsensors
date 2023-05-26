@@ -9,7 +9,7 @@ fi
 create_config() {
     echo "#!/bin/bash" > .config
     echo "# Location of database file" >> .config
-    echo "DB=/var/log/sensors" >> .config
+    echo "DB=/var/log/cirrus-rrd/sensors" >> .config
     echo "# Where the graphs are stored" >> .config
     echo "OUT1=$PWD/graph_sys" >> .config
     echo "OUT2=$PWD/graph_net" >> .config
