@@ -1,5 +1,8 @@
 #!/bin/bash
 
+heartbeat=300      # seconds sleep between captures
+capture_space=600  # seconds between recorded values
+
 if [ "$EUID" -ne 0 ]
 then
     echo "Please run with sudo"
@@ -237,24 +240,24 @@ while true; do
 done
 
 # Store 7 days every 1 min (10080 1min intervals)
-# Store 3 months every 1 hour (2160 1h intervals)
-rrdtool create ${DB}.rrd --start N --step 60 \
-    DS:cpu_load:GAUGE:60:U:U \
-    DS:cpu_temp:GAUGE:60:U:U \
-	DS:ssd_read:COUNTER:60:U:U \
-	DS:ssd_write:COUNTER:60:U:U \
-    DS:ssd_temp:GAUGE:60:U:U \
-    DS:net_cel:COUNTER:60:U:U \
-    DS:net_wif:COUNTER:60:U:U \
-    DS:net_eth:COUNTER:60:U:U \
-    DS:app1_cpu:GAUGE:60:U:U \
-    DS:app1_mem:GAUGE:60:U:U \
-    DS:app2_cpu:GAUGE:60:U:U \
-    DS:app2_mem:GAUGE:60:U:U \
-    DS:app3_cpu:GAUGE:60:U:U \
-    DS:app3_mem:GAUGE:60:U:U \
-    DS:app4_cpu:GAUGE:60:U:U \
-    DS:app4_mem:GAUGE:60:U:U \
+# Store 3 months every 1 hour (21$capture_space 1h intervals)
+rrdtool create ${DB}.rrd --start N --step $capture_space \
+    DS:cpu_load:GAUGE:$capture_space:U:U \
+    DS:cpu_temp:GAUGE:$capture_space:U:U \
+	DS:ssd_read:COUNTER:$capture_space:U:U \
+	DS:ssd_write:COUNTER:$capture_space:U:U \
+    DS:ssd_temp:GAUGE:$capture_space:U:U \
+    DS:net_cel:COUNTER:$capture_space:U:U \
+    DS:net_wif:COUNTER:$capture_space:U:U \
+    DS:net_eth:COUNTER:$capture_space:U:U \
+    DS:app1_cpu:GAUGE:$capture_space:U:U \
+    DS:app1_mem:GAUGE:$capture_space:U:U \
+    DS:app2_cpu:GAUGE:$capture_space:U:U \
+    DS:app2_mem:GAUGE:$capture_space:U:U \
+    DS:app3_cpu:GAUGE:$capture_space:U:U \
+    DS:app3_mem:GAUGE:$capture_space:U:U \
+    DS:app4_cpu:GAUGE:$capture_space:U:U \
+    DS:app4_mem:GAUGE:$capture_space:U:U \
     RRA:AVERAGE:0.5:1:10080 RRA:AVERAGE:0.5:60:2160 
 
 

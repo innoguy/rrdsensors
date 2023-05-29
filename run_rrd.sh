@@ -1,5 +1,8 @@
 #!/bin/bash
 
+heartbeat=300      # seconds sleep between captures
+capture_space=600  # seconds between recorded values
+
 source /etc/systemd/system/rrd.config
 
 if [ -z "$CONTROLLER" ]
@@ -147,6 +150,6 @@ do
 
   echo $CPU_LOAD:$CPU_TEMP:$SSD_READ:$SSD_WRITE:$SSD_TEMP:$NET_CEL:$NET_WIF:$NET_ETH:$APP1_CPU:$APP1_MEM:$APP2_CPU:$APP2_MEM:$APP3_CPU:$APP3_MEM:$APP4_CPU:$APP4_MEM
   rrdtool updatev ${DB}.rrd N:$CPU_LOAD:$CPU_TEMP:$SSD_READ:$SSD_WRITE:$SSD_TEMP:$NET_CEL:$NET_WIF:$NET_ETH:$APP1_CPU:$APP1_MEM:$APP2_CPU:$APP2_MEM:$APP3_CPU:$APP3_MEM:$APP4_CPU:$APP4_MEM
-  sleep 20
+  sleep $heartbeat
 done
  
