@@ -260,7 +260,6 @@ rrdtool create ${DB}.rrd --start N --step $capture_space \
     DS:app4_mem:GAUGE:$capture_space:U:U \
     RRA:AVERAGE:0.5:1:1008 RRA:AVERAGE:0.5:6:1440 
 
-
 if [ ! -f "${DB}.rrd" ]
 then
     echo "Something went wrong. "
