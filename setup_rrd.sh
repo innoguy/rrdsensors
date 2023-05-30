@@ -239,8 +239,8 @@ while true; do
 	esac
 done
 
-# Store 7 days every 1 min (10080 1min intervals)
-# Store 3 months every 1 hour (21$capture_space 1h intervals)
+# Store 7 days every 10 min (1008 10min intervals)
+# Store 2 months every 1 hour (1440 1h intervals)
 rrdtool create ${DB}.rrd --start N --step $capture_space \
     DS:cpu_load:GAUGE:$capture_space:U:U \
     DS:cpu_temp:GAUGE:$capture_space:U:U \
@@ -258,7 +258,7 @@ rrdtool create ${DB}.rrd --start N --step $capture_space \
     DS:app3_mem:GAUGE:$capture_space:U:U \
     DS:app4_cpu:GAUGE:$capture_space:U:U \
     DS:app4_mem:GAUGE:$capture_space:U:U \
-    RRA:AVERAGE:0.5:1:10080 RRA:AVERAGE:0.5:60:2160 
+    RRA:AVERAGE:0.5:1:1008 RRA:AVERAGE:0.5:6:1440 
 
 
 if [ ! -f "${DB}.rrd" ]
