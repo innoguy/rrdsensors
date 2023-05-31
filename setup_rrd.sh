@@ -210,7 +210,6 @@ fi
 # read getopt's output this way to handle the quoting right
 eval set -- "$PARSED"
 VERBOSE="0"
-DB="/var/log/sensors"
 while true; do
 	case "$1" in
 		-h|--help)
