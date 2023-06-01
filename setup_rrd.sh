@@ -240,6 +240,7 @@ done
 
 # Store 7 days every 10 min (1008 10min intervals)
 # Store 2 months every 1 hour (1440 1h intervals)
+mkdir /var/log/cirrus-rrd
 rrdtool create ${DB}.rrd --start N --step $capture_space \
     DS:cpu_load:GAUGE:$capture_space:U:U \
     DS:cpu_temp:GAUGE:$capture_space:U:U \
